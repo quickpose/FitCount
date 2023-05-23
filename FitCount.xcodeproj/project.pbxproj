@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */; };
+		92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */; };
+		92C702FE2A1BC74A002ECC0B /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FD2A1BC74A002ECC0B /* QuickPoseCore */; };
+		92C703002A1BC74A002ECC0B /* QuickPoseMP in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FF2A1BC74A002ECC0B /* QuickPoseMP */; };
+		92C703022A1BC74A002ECC0B /* QuickPoseSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 92C703012A1BC74A002ECC0B /* QuickPoseSwiftUI */; };
 		92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */; };
 		92CACFD32A1B7DD100DA2B40 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFD22A1B7DD100DA2B40 /* ContentView.swift */; };
 		92CACFD52A1B7DD100DA2B40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92CACFD42A1B7DD100DA2B40 /* Assets.xcassets */; };
@@ -14,6 +19,8 @@
 		92CACFE22A1B7DD200DA2B40 /* FitCountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFE12A1B7DD200DA2B40 /* FitCountTests.swift */; };
 		92CACFEC2A1B7DD200DA2B40 /* FitCountUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFEB2A1B7DD200DA2B40 /* FitCountUITests.swift */; };
 		92CACFEE2A1B7DD200DA2B40 /* FitCountUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFED2A1B7DD200DA2B40 /* FitCountUITestsLaunchTests.swift */; };
+		92CACFFB2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */; };
+		92CACFFD2A1B99A500DA2B40 /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPoseBasicView.swift; sourceTree = "<group>"; };
+		92C703032A1D049E002ECC0B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92CACFCD2A1B7DD100DA2B40 /* FitCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitCountApp.swift; sourceTree = "<group>"; };
 		92CACFD22A1B7DD100DA2B40 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -44,6 +53,8 @@
 		92CACFE72A1B7DD200DA2B40 /* FitCountUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitCountUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		92CACFEB2A1B7DD200DA2B40 /* FitCountUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitCountUITests.swift; sourceTree = "<group>"; };
 		92CACFED2A1B7DD200DA2B40 /* FitCountUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitCountUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDetailsView.swift; sourceTree = "<group>"; };
+		92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +62,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92C702FE2A1BC74A002ECC0B /* QuickPoseCore in Frameworks */,
+				92C703002A1BC74A002ECC0B /* QuickPoseMP in Frameworks */,
+				92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */,
+				92C703022A1BC74A002ECC0B /* QuickPoseSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,10 +109,14 @@
 		92CACFCF2A1B7DD100DA2B40 /* FitCount */ = {
 			isa = PBXGroup;
 			children = (
+				92C703032A1D049E002ECC0B /* Info.plist */,
 				92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */,
 				92CACFD22A1B7DD100DA2B40 /* ContentView.swift */,
 				92CACFD42A1B7DD100DA2B40 /* Assets.xcassets */,
 				92CACFD62A1B7DD100DA2B40 /* Preview Content */,
+				92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */,
+				92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */,
+				92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */,
 			);
 			path = FitCount;
 			sourceTree = "<group>";
@@ -143,6 +162,12 @@
 			dependencies = (
 			);
 			name = FitCount;
+			packageProductDependencies = (
+				92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */,
+				92C702FD2A1BC74A002ECC0B /* QuickPoseCore */,
+				92C702FF2A1BC74A002ECC0B /* QuickPoseMP */,
+				92C703012A1BC74A002ECC0B /* QuickPoseSwiftUI */,
+			);
 			productName = FitCount;
 			productReference = 92CACFCD2A1B7DD100DA2B40 /* FitCount.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +240,9 @@
 				Base,
 			);
 			mainGroup = 92CACFC42A1B7DD000DA2B40;
+			packageReferences = (
+				92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */,
+			);
 			productRefGroup = 92CACFCE2A1B7DD100DA2B40 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -259,6 +287,9 @@
 			files = (
 				92CACFD32A1B7DD100DA2B40 /* ContentView.swift in Sources */,
 				92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */,
+				92CACFFD2A1B99A500DA2B40 /* WorkoutView.swift in Sources */,
+				92CACFFB2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift in Sources */,
+				92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,11 +451,14 @@
 				DEVELOPMENT_TEAM = 22W63VGZT5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FitCount/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to provide movements feedback during a workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -449,11 +483,14 @@
 				DEVELOPMENT_TEAM = 22W63VGZT5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FitCount/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to provide movements feedback during a workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -583,6 +620,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/quickpose/quickpose-ios-sdk.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCamera;
+		};
+		92C702FD2A1BC74A002ECC0B /* QuickPoseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCore;
+		};
+		92C702FF2A1BC74A002ECC0B /* QuickPoseMP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseMP;
+		};
+		92C703012A1BC74A002ECC0B /* QuickPoseSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 92CACFC52A1B7DD000DA2B40 /* Project object */;
 }
