@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		920A3EEC2A1F6E0E00EC6FC9 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */; };
+		920A3EEF2A1F76F800EC6FC9 /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EEE2A1F76F800EC6FC9 /* BoundingBoxView.swift */; };
+		920A3EF12A1F7C2300EC6FC9 /* WorkoutResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */; };
+		920A3EF32A1F801A00EC6FC9 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EF22A1F801A00EC6FC9 /* Workout.swift */; };
 		92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */; };
 		92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */; };
 		92C702FE2A1BC74A002ECC0B /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FD2A1BC74A002ECC0B /* QuickPoseCore */; };
@@ -44,6 +47,9 @@
 
 /* Begin PBXFileReference section */
 		920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		920A3EEE2A1F76F800EC6FC9 /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
+		920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutResultsView.swift; sourceTree = "<group>"; };
+		920A3EF22A1F801A00EC6FC9 /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
 		92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPoseBasicView.swift; sourceTree = "<group>"; };
 		92C703032A1D049E002ECC0B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92CACFCD2A1B7DD100DA2B40 /* FitCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +96,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		920A3EED2A1F76D400EC6FC9 /* Workout */ = {
+			isa = PBXGroup;
+			children = (
+				92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */,
+				92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */,
+				920A3EEE2A1F76F800EC6FC9 /* BoundingBoxView.swift */,
+				920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */,
+				920A3EF22A1F801A00EC6FC9 /* Workout.swift */,
+			);
+			path = Workout;
+			sourceTree = "<group>";
+		};
 		92CACFC42A1B7DD000DA2B40 = {
 			isa = PBXGroup;
 			children = (
@@ -114,13 +132,12 @@
 			isa = PBXGroup;
 			children = (
 				92C703032A1D049E002ECC0B /* Info.plist */,
-				92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */,
-				92CACFD22A1B7DD100DA2B40 /* ContentView.swift */,
 				92CACFD42A1B7DD100DA2B40 /* Assets.xcassets */,
 				92CACFD62A1B7DD100DA2B40 /* Preview Content */,
+				920A3EED2A1F76D400EC6FC9 /* Workout */,
+				92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */,
+				92CACFD22A1B7DD100DA2B40 /* ContentView.swift */,
 				92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */,
-				92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */,
-				92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */,
 				92F2D1FA2A1D0C8400EC1B81 /* Text2Speech.swift */,
 				920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */,
 			);
@@ -293,6 +310,9 @@
 			files = (
 				92CACFD32A1B7DD100DA2B40 /* ContentView.swift in Sources */,
 				92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */,
+				920A3EEF2A1F76F800EC6FC9 /* BoundingBoxView.swift in Sources */,
+				920A3EF32A1F801A00EC6FC9 /* Workout.swift in Sources */,
+				920A3EF12A1F7C2300EC6FC9 /* WorkoutResultsView.swift in Sources */,
 				920A3EEC2A1F6E0E00EC6FC9 /* Timer.swift in Sources */,
 				92CACFFD2A1B99A500DA2B40 /* WorkoutView.swift in Sources */,
 				92F2D1FB2A1D0C8400EC1B81 /* Text2Speech.swift in Sources */,

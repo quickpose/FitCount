@@ -10,6 +10,8 @@ import SwiftUI
 struct ExerciseDetailsView: View {
     let exercise: Exercise
     
+    @State private var nReps = 1
+    
     var body: some View {
         VStack {
             Text(exercise.name)
@@ -26,7 +28,29 @@ struct ExerciseDetailsView: View {
             
             Spacer()
             
-            NavigationLink(destination: WorkoutView()) {
+            HStack {
+                Text("Number of reps:")
+                    .font(.headline)
+                    .foregroundColor(.black)
+                    .padding(.trailing, 8)
+                
+                Picker("Number of reps", selection: $nReps) {
+                    ForEach(1...100, id: \.self) { number in
+                        Text("\(number)")
+                            .foregroundColor(.black)
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                
+                
+            }
+            .clipped()
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+            .padding()
+            
+            NavigationLink(destination: WorkoutView(nReps: nReps)) {
                 Text("Start workout")
                     .foregroundColor(.white)
                     .padding()
