@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		920A3EEC2A1F6E0E00EC6FC9 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */; };
 		92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */; };
 		92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */; };
 		92C702FE2A1BC74A002ECC0B /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FD2A1BC74A002ECC0B /* QuickPoseCore */; };
@@ -21,6 +22,7 @@
 		92CACFEE2A1B7DD200DA2B40 /* FitCountUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFED2A1B7DD200DA2B40 /* FitCountUITestsLaunchTests.swift */; };
 		92CACFFB2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */; };
 		92CACFFD2A1B99A500DA2B40 /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */; };
+		92F2D1FB2A1D0C8400EC1B81 /* Text2Speech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F2D1FA2A1D0C8400EC1B81 /* Text2Speech.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPoseBasicView.swift; sourceTree = "<group>"; };
 		92C703032A1D049E002ECC0B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92CACFCD2A1B7DD100DA2B40 /* FitCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,6 +58,7 @@
 		92CACFED2A1B7DD200DA2B40 /* FitCountUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitCountUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDetailsView.swift; sourceTree = "<group>"; };
 		92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
+		92F2D1FA2A1D0C8400EC1B81 /* Text2Speech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text2Speech.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +121,8 @@
 				92CACFFA2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift */,
 				92CACFFC2A1B99A500DA2B40 /* WorkoutView.swift */,
 				92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */,
+				92F2D1FA2A1D0C8400EC1B81 /* Text2Speech.swift */,
+				920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */,
 			);
 			path = FitCount;
 			sourceTree = "<group>";
@@ -287,7 +293,9 @@
 			files = (
 				92CACFD32A1B7DD100DA2B40 /* ContentView.swift in Sources */,
 				92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */,
+				920A3EEC2A1F6E0E00EC6FC9 /* Timer.swift in Sources */,
 				92CACFFD2A1B99A500DA2B40 /* WorkoutView.swift in Sources */,
+				92F2D1FB2A1D0C8400EC1B81 /* Text2Speech.swift in Sources */,
 				92CACFFB2A1B8F9D00DA2B40 /* ExerciseDetailsView.swift in Sources */,
 				92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */,
 			);
