@@ -16,7 +16,8 @@ struct VoiceCommands {
 
 struct QuickPoseBasicView: View {
     private var quickPose = QuickPose(sdkKey: "01H122Z3J6NY33V548V2D55K3J") // register for your free key at https://dev.quickpose.ai
-    private var nReps: Int
+    private var nReps: Int?
+    private var nSeconds: Int?
     
     @State private var overlayImage: UIImage?
     
@@ -25,6 +26,7 @@ struct QuickPoseBasicView: View {
     @State var counter = QuickPoseThresholdCounter()
     @State var measure: Double = 0
     @State var count: Int = 0
+    let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
     @State var isBBoxState = true
@@ -40,8 +42,9 @@ struct QuickPoseBasicView: View {
     
     let bboxTimer = TimerManager()
     
-    init(nReps: Int) {
+    init(nReps: Int?, nSeconds: Int?) {
         self.nReps = nReps
+        self.nSeconds = nSeconds
     }
     
     var body: some View {
@@ -63,6 +66,7 @@ struct QuickPoseBasicView: View {
                         BoundingBoxView(isInBBox: isInBBox, indicatorWidth: indicatorWidth)
                     }
                 }
+                
                 .overlay(alignment: .bottom) {
                     if (!isBBoxState) {
                         Text("Reps: " + String(count))
@@ -73,6 +77,16 @@ struct QuickPoseBasicView: View {
                             .cornerRadius(10)
                             .scaleEffect(countScale)
                     }
+                }
+                .overlay(alignment: .top) {
+                    
+                    
+                    Text("Time: " + String(Int(exerciseTimer.getTotalSeconds())) + "sec")
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(16)
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
                 .overlay(alignment: .center) {
                     if (!isBBoxState) {
@@ -127,6 +141,7 @@ struct QuickPoseBasicView: View {
                         if (bboxTimer.isRunning() && bboxTimer.getTotalSeconds() > 2) {
                             isBBoxState = false
                             VoiceCommands.letUsStartTheExercise.say()
+                            exerciseTimer.start()
                         }
                         
                         if (!isBBoxState) {
@@ -151,7 +166,7 @@ struct QuickPoseBasicView: View {
                                 }
                                 count = counter.getCount()
                                 
-                                if (count >= nReps) {
+                                if (nReps != nil && count >= nReps! || nSeconds != nil && Int(exerciseTimer.getTotalSeconds()) >= nSeconds!) {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                         isActive = true // Set the state variable to trigger the navigation
                                     }

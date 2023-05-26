@@ -10,16 +10,18 @@ import AVFoundation
 
 struct WorkoutView: View {
     @State var cameraPermissionGranted = false
-    var nReps: Int
+    var nReps: Int?
+    var nSeconds: Int?
     
-    init(nReps: Int) {
+    init(nReps: Int?, nSeconds: Int?) {
         self.nReps = nReps
+        self.nSeconds = nSeconds
     }
     
     var body: some View {
         GeometryReader { geometry in
             if cameraPermissionGranted {
-                QuickPoseBasicView(nReps: nReps)
+                QuickPoseBasicView(nReps: nReps, nSeconds: nSeconds)
             }
         }.onAppear {
             AVCaptureDevice.requestAccess(for: .video) { accessGranted in

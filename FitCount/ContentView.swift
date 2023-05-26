@@ -11,14 +11,10 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                
-                // Replace with your grid of exercises
-                // For example:
-                Grid(exercises) { exercise in
+                List(exercises) { exercise in
                     ExerciseItemView(exercise: exercise)
                 }
-                .padding()
-                //                .background(Color(#colorLiteral(red: 0.3254901961, green: 0.4431372549, blue: 1, alpha: 1)))
+                .background(.white)
             }.navigationBarTitle(Text("Workouts"))
         }
     }
@@ -38,31 +34,9 @@ struct ExerciseItemView: View {
             VStack(alignment: .leading) {
                 Text(exercise.name)
                     .font(.headline)
-                    .foregroundColor(.white) // Set text color to white
             }
             .padding()
-            .background(Color(#colorLiteral(red: 0.3254901961, green: 0.4431372549, blue: 1, alpha: 1))) // Set background color to the main color
             .cornerRadius(8) // Add corner radius for a rounded look
-        }
-    }
-}
-
-struct Grid<Item, ItemView>: View where Item: Identifiable, ItemView: View {
-    private var items: [Item]
-    private var viewForItem: (Item) -> ItemView
-    
-    init(_ items: [Item], viewForItem: @escaping (Item) -> ItemView) {
-        self.items = items
-        self.viewForItem = viewForItem
-    }
-    
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 16) {
-                ForEach(items) { item in
-                    viewForItem(item)
-                }
-            }
         }
     }
 }

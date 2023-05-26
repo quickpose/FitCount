@@ -11,6 +11,7 @@
 		920A3EEF2A1F76F800EC6FC9 /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EEE2A1F76F800EC6FC9 /* BoundingBoxView.swift */; };
 		920A3EF12A1F7C2300EC6FC9 /* WorkoutResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */; };
 		920A3EF32A1F801A00EC6FC9 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EF22A1F801A00EC6FC9 /* Workout.swift */; };
+		920A3EF62A20B14100EC6FC9 /* PagerTabStripView in Frameworks */ = {isa = PBXBuildFile; productRef = 920A3EF52A20B14100EC6FC9 /* PagerTabStripView */; };
 		92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */; };
 		92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */; };
 		92C702FE2A1BC74A002ECC0B /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FD2A1BC74A002ECC0B /* QuickPoseCore */; };
@@ -75,6 +76,7 @@
 				92C702FE2A1BC74A002ECC0B /* QuickPoseCore in Frameworks */,
 				92C703002A1BC74A002ECC0B /* QuickPoseMP in Frameworks */,
 				92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */,
+				920A3EF62A20B14100EC6FC9 /* PagerTabStripView in Frameworks */,
 				92C703022A1BC74A002ECC0B /* QuickPoseSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,6 +192,7 @@
 				92C702FD2A1BC74A002ECC0B /* QuickPoseCore */,
 				92C702FF2A1BC74A002ECC0B /* QuickPoseMP */,
 				92C703012A1BC74A002ECC0B /* QuickPoseSwiftUI */,
+				920A3EF52A20B14100EC6FC9 /* PagerTabStripView */,
 			);
 			productName = FitCount;
 			productReference = 92CACFCD2A1B7DD100DA2B40 /* FitCount.app */;
@@ -265,6 +268,7 @@
 			mainGroup = 92CACFC42A1B7DD000DA2B40;
 			packageReferences = (
 				92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */,
+				920A3EF42A20B14000EC6FC9 /* XCRemoteSwiftPackageReference "PagerTabStripView" */,
 			);
 			productRefGroup = 92CACFCE2A1B7DD100DA2B40 /* Products */;
 			projectDirPath = "";
@@ -650,6 +654,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		920A3EF42A20B14000EC6FC9 /* XCRemoteSwiftPackageReference "PagerTabStripView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xmartlabs/PagerTabStripView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
 		92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/quickpose/quickpose-ios-sdk.git";
@@ -661,6 +673,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		920A3EF52A20B14100EC6FC9 /* PagerTabStripView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 920A3EF42A20B14000EC6FC9 /* XCRemoteSwiftPackageReference "PagerTabStripView" */;
+			productName = PagerTabStripView;
+		};
 		92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 92C702FA2A1BC74A002ECC0B /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;

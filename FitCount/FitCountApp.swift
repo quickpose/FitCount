@@ -8,8 +8,9 @@
 import SwiftUI
 
 let exercises = [
-    Exercise(name: "Biceps Curls", details: "Details")
-    // Add more exercises as needed
+    Exercise(name: "Biceps Curls", details: "Lift weights in both hands by bending your elbow and lifting them towards your shoulder."),
+    Exercise(name: "Biceps Curls 2", details: "Lift weights in both hands by bending your elbow and lifting them towards your shoulder.")
+
 ]
 
 struct Exercise: Identifiable {

@@ -6,51 +6,123 @@
 //
 
 import SwiftUI
+import PagerTabStripView
+
+
+struct TitleNavBarItem: View {
+    let title: String
+    
+    var body: some View {
+        VStack {
+            Text(title)
+                .foregroundColor(Color.gray)
+                .font(.subheadline)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white)
+    }
+}
+
 
 struct ExerciseDetailsView: View {
     let exercise: Exercise
     
-    @State private var nReps = 1
+    @State private var nReps : Int = 1
+    @State private var nMinutes : Int = 1
+    @State private var nSeconds: Int = 0
+    
+    @State var selection = 1
     
     var body: some View {
         VStack {
-            Text(exercise.name)
-                .font(.title)
-                .padding()
             
             Text(exercise.details)
                 .font(.body)
                 .padding()
             
             
-            
-            // Add more exercise details as needed
-            
             Spacer()
             
-            HStack {
-                Text("Number of reps:")
-                    .font(.headline)
-                    .foregroundColor(.black)
-                    .padding(.trailing, 8)
-                
-                Picker("Number of reps", selection: $nReps) {
-                    ForEach(1...100, id: \.self) { number in
-                        Text("\(number)")
-                            .foregroundColor(.black)
+            PagerTabStripView(
+                swipeGestureEnabled: .constant(false),
+                selection: $selection
+            ) {
+                VStack {
+                    Text("Select the number of reps")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .padding(.top, 8)
+                    
+                    Picker("Reps", selection: $nReps) {
+                        ForEach(1...100, id: \.self) { number in
+                            Text("\(number) reps")
+                                .foregroundColor(.black)
+                        }
                     }
+                    .pickerStyle(WheelPickerStyle())
                 }
-                .pickerStyle(WheelPickerStyle())
-                
-                
-            }
-            .clipped()
+                .clipped()
                 .background(Color.white)
                 .cornerRadius(10)
                 .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-            .padding()
+                .padding()
+                .pagerTabItem(tag: 1) {
+                    TitleNavBarItem(title: "Reps")
+                }
+                
+                VStack {
+                    Text("Select the time of the exercise")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .padding(.top, 8)
+                    
+                    HStack{
+                        
+                        Picker("Minutes", selection: $nMinutes) {
+                            ForEach(0...30, id: \.self) { number in
+                                Text("\(number) min")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .onChange(of: nMinutes) { min in
+                            // make sure that time is not 0
+                            if (min <= 0 && nSeconds <= 0) {
+                                nMinutes = 0
+                                nSeconds = 1
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        
+                        Picker("Seconds", selection: $nSeconds) {
+                            ForEach(0...59, id: \.self) { number in
+                                Text("\(number) sec")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .onChange(of: nSeconds) { sec in
+                            // make sure that time is not 0
+                            if (nMinutes <= 0 && sec <= 0) {
+                                nMinutes = 1
+                                nSeconds = 0
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        
+                    }
+                    
+                }
+                .clipped()
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                .padding().pagerTabItem(tag: 2) {
+                    TitleNavBarItem(title: "Timer")
+                }
+            }
             
-            NavigationLink(destination: WorkoutView(nReps: nReps)) {
+            
+            
+            NavigationLink(destination: WorkoutView(nReps: selection == 1 ? nReps : nil, nSeconds: selection == 2 ? nMinutes * 60 + nSeconds : nil)) {
                 Text("Start workout")
                     .foregroundColor(.white)
                     .padding()
@@ -60,7 +132,7 @@ struct ExerciseDetailsView: View {
             
             
         }
-        .navigationBarTitle(Text("Exercise Details"))
+        .navigationBarTitle(Text(exercise.name))
         
     }
 }
