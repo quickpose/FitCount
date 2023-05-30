@@ -137,8 +137,8 @@ struct ExerciseDetailsView: View {
     }
 }
 
-struct ExerciseDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ExerciseDetailsView(exercise: Exercise(name: "Exercise 1", details: "Exercise 1 details"))
-    }
-}
+//struct ExerciseDetailsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ExerciseDetailsView(exercise: Exercise(name: "Exercise 1", details: "Exercise 1 details"))
+//    }
+//}

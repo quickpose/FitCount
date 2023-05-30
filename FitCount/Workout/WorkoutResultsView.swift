@@ -8,7 +8,19 @@
 import SwiftUI
 
 struct WorkoutResultsView: View {
+    @EnvironmentObject var sessionData: SessionData
+    
     var body: some View {
-        Text("Results")
+        VStack{
+            
+            Text("Count: " + String(sessionData.count))
+            Text("Time: " + String(sessionData.seconds))
+            
+//            Button("Pop to Root") {
+//
+//            }
+            
+        }
+        .navigationBarBackButtonHidden(true)
     }
 }

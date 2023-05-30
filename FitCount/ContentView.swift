@@ -8,28 +8,41 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var viewModel = ViewModel()
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                List(exercises) { exercise in
-                    ExerciseItemView(exercise: exercise)
+        NavigationStack(path: $viewModel.path) {
+            TabView{
+                NavigationView {
+                    VStack {
+                        List(exercises) { exercise in
+                            ExerciseItemView(exercise: exercise)
+                        }
+                        .background(.white)
+                    }.navigationBarTitle(Text("Workouts"))
+                }.tabItem{
+                    Label("Exercises", systemImage: "figure.strengthtraining.functional")
                 }
-                .background(.white)
-            }.navigationBarTitle(Text("Workouts"))
+                
+                HistoryView().tabItem{
+                    Label("History", systemImage: "chart.bar")
+                }
+            }
         }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
 
 struct ExerciseItemView: View {
+//    @Binding var path: [Int]
     let exercise: Exercise
     
     var body: some View {
+//        NavigationLink() {}
+//            .navigationDestination(for: Exercise.self) { exercise in
+//                ExerciseDetailsView(exercise: exercise)
+//            }
+        
         NavigationLink(destination: ExerciseDetailsView(exercise: exercise)) {
             VStack(alignment: .leading) {
                 Text(exercise.name)
@@ -40,3 +53,15 @@ struct ExerciseItemView: View {
         }
     }
 }
+
+class ViewModel: ObservableObject {
+    @Published var path:NavigationPath = NavigationPath()
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+
