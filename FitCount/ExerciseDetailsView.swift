@@ -122,7 +122,7 @@ struct ExerciseDetailsView: View {
             
             
             
-            NavigationLink(destination: WorkoutView(nReps: selection == 1 ? nReps : nil, nSeconds: selection == 2 ? nMinutes * 60 + nSeconds : nil)) {
+            NavigationLink(destination: WorkoutView(exercise: exercise, nReps: selection == 1 ? nReps : nil, nSeconds: selection == 2 ? nMinutes * 60 + nSeconds : nil)) {
                 Text("Start workout")
                     .foregroundColor(.white)
                     .padding()

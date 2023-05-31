@@ -28,6 +28,7 @@ struct QuickPoseBasicView: View {
     private var quickPose = QuickPose(sdkKey: "01H122Z3J6NY33V548V2D55K3J") // register for your free key at https://dev.quickpose.ai
     private var nReps: Int?
     private var nSeconds: Int?
+    private var exercise: Exercise
     
     @State private var overlayImage: UIImage?
     
@@ -52,7 +53,8 @@ struct QuickPoseBasicView: View {
     
     let bboxTimer = TimerManager()
     
-    init(nReps: Int?, nSeconds: Int?) {
+    init(exercise: Exercise, nReps: Int?, nSeconds: Int?) {
+        self.exercise = exercise
         self.nReps = nReps
         self.nSeconds = nSeconds
     }
@@ -107,7 +109,7 @@ struct QuickPoseBasicView: View {
                         }
                     }
                     .onAppear {
-                        quickPose.start(features: [.fitness(.bicepsCurls), .overlay(.wholeBody)], onFrame: { status, image, features,  feedback, landmarks in
+                        quickPose.start(features: exercise.features, onFrame: { status, image, features, feedback, landmarks in
                             
                             VoiceCommands.standInsideBBox.say()
                             
@@ -184,14 +186,10 @@ struct QuickPoseBasicView: View {
                                     count = counter.getCount()
                                     
                                     if (nReps != nil && count >= nReps! || nSeconds != nil && Int(exerciseTimer.getTotalSeconds()) >= nSeconds!) {
-                                        exerciseTimer.pause()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        DispatchQueue.main.async {
                                             sessionData.seconds = Int(exerciseTimer.getTotalSeconds())
                                             sessionData.count = Int(counter.getCount())
                                             
-                                            print(sessionData)
-                                            
-                                            exerciseTimer.reset()
                                             isActive = true // Set the state variable to trigger the navigation
                                         }
                                     }
@@ -205,6 +203,9 @@ struct QuickPoseBasicView: View {
                             }
                         })
                     }.onDisappear {
+                        let sessionDataDump = SessionDataModel(exercise: exercise.name, count: Int(counter.getCount()), seconds: Int(exerciseTimer.getTotalSeconds()), date: Date())
+                        appendToJson(sessionData: sessionDataDump)
+                        
                         quickPose.stop()
                     }
                 }

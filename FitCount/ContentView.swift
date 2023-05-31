@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @State var viewModel = ViewModel()
     
+    let sessionDataArray = loadAndDisplayJsonData()
+    
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             TabView{
@@ -24,7 +26,7 @@ struct ContentView: View {
                     Label("Exercises", systemImage: "figure.strengthtraining.functional")
                 }
                 
-                HistoryView().tabItem{
+                HistoryView(sessionDataArray: sessionDataArray).tabItem{
                     Label("History", systemImage: "chart.bar")
                 }
             }
