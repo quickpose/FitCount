@@ -25,6 +25,8 @@ struct TitleNavBarItem: View {
 
 
 struct ExerciseDetailsView: View {
+    @EnvironmentObject var viewModel: ViewModel
+    
     let exercise: Exercise
     
     @State private var nReps : Int = 1
@@ -120,20 +122,21 @@ struct ExerciseDetailsView: View {
                 }
             }
             
-            
-            
-            NavigationLink(destination: WorkoutView(exercise: exercise, nReps: selection == 1 ? nReps : nil, nSeconds: selection == 2 ? nMinutes * 60 + nSeconds : nil)) {
+            NavigationLink(value: "Workout") {
                 Text("Start workout")
                     .foregroundColor(.white)
                     .padding()
                     .background(Color(#colorLiteral(red: 0.3254901961, green: 0.4431372549, blue: 1, alpha: 1))) // Set background color to the main color
                     .cornerRadius(8) // Add corner radius for a rounded look
+                
+            }
+            .navigationDestination(for: String.self) { _ in
+                WorkoutView(exercise: exercise, nReps: selection == 1 ? nReps : nil, nSeconds: selection == 2 ? nMinutes * 60 + nSeconds : nil).environmentObject(viewModel)
             }
             
             
         }
         .navigationBarTitle(Text(exercise.name))
-        
     }
 }
 

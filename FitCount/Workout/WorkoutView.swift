@@ -9,6 +9,8 @@ import SwiftUI
 import AVFoundation
 
 struct WorkoutView: View {
+    @EnvironmentObject var viewModel: ViewModel
+    
     @State var cameraPermissionGranted = false
     var exercise: Exercise
     var nReps: Int?
@@ -18,7 +20,7 @@ struct WorkoutView: View {
     var body: some View {
         GeometryReader { geometry in
             if cameraPermissionGranted {
-                QuickPoseBasicView(exercise: exercise, nReps: nReps, nSeconds: nSeconds)
+                QuickPoseBasicView(exercise: exercise, nReps: nReps, nSeconds: nSeconds).environmentObject(viewModel)
             }
         }.onAppear {
             AVCaptureDevice.requestAccess(for: .video) { accessGranted in

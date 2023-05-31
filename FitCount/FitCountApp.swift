@@ -22,7 +22,7 @@ let exercises = [
 
 ]
 
-struct Exercise: Identifiable {
+struct Exercise: Identifiable, Hashable {
     let id = UUID()
     let name: String
     let details: String
