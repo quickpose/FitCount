@@ -43,7 +43,7 @@ struct QuickPoseBasicView: View {
     let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
-    @State var state = WorkoutState.exercise
+    @State var state = WorkoutState.bbox
     
     @State private var indicatorWidth: CGFloat = 0.0
     
@@ -174,7 +174,7 @@ struct QuickPoseBasicView: View {
                                 feedbackText = nil
                             }
                             
-                            if let result = features[.fitness(.bicepsCurls)]{
+                            if case .fitness = exercise.features.first, let result = features[exercise.features.first!]{
                                 counter.count(probability: result.value)
                                 if (counter.getCount() > count) {
                                     Text2Speech(text: String(counter.getCount())).say()

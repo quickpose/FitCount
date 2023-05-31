@@ -31,9 +31,9 @@ struct ContentView: View {
                         .background(.white)
                     }.navigationBarTitle(Text("Workouts"))
                 }
-                    .tabItem{
-                        Label("Exercises", systemImage: "figure.strengthtraining.functional")
-                    }
+                .tabItem{
+                    Label("Exercises", systemImage: "figure.strengthtraining.functional")
+                }
                 
                 HistoryView().tabItem{
                     Label("History", systemImage: "chart.bar")
