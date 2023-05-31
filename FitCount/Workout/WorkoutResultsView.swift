@@ -23,7 +23,7 @@ struct WorkoutResultsView: View {
                 Text("Finish workout")
                     .foregroundColor(.white)
                     .padding()
-                    .background(Color(#colorLiteral(red: 0.3254901961, green: 0.4431372549, blue: 1, alpha: 1))) // Set background color to the main color
+                    .background(.indigo) // Set background color to the main color
                     .cornerRadius(8) // Add corner radius for a rounded look
             }.padding()
         }

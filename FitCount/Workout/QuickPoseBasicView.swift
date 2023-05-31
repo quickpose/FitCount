@@ -214,8 +214,6 @@ struct QuickPoseBasicView: View {
                 }
             }
         }
-        
-        
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
     }
