@@ -9,28 +9,26 @@ import SwiftUI
 
 struct AboutView: View {
     var body: some View {
-        VStack(spacing: 50) {
-            Image("QuickPose-Logo")
-                        .resizable()
-                        .scaledToFit()
-            
-            
-            VStack(spacing: 10) {
-                Text("Our app is powered by QuickPose.AI iOS SDK.")
-                Link(
-                    "Learn more about QuickPose.AI",
-                    destination: URL(string: "https://quickpose.ai")!
-                ).font(.headline)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .leading) {
-                Link("Give us feedback", destination: URL(string: "https://quickpose.ai")!)
-                    .font(.headline)
-            }
-            .padding()
-            .cornerRadius(8)
+        NavigationView {
+            VStack(spacing: 50) {
+                VStack(spacing: 10) {
+                    Text("Our app is powered by QuickPose.ai iOS SDK.")
+                        .padding(.top, 50)
+                    Link(
+                        "Learn more about QuickPose.ai",
+                        destination: URL(string: "http://linktr.ee/quickpose?utm_source=fitcounter")!
+                    ).font(.headline)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .leading) {
+                    Link("Help us improve", destination: URL(string: "https://forms.gle/ebHP58NeeYGEoBcb8")!)
+                        .font(.headline)
+                }
+                .padding()
+                .cornerRadius(8)
+            }.navigationBarTitle("About")
         }
     }
 }
