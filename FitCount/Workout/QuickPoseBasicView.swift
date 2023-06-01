@@ -11,7 +11,6 @@ import QuickPoseSwiftUI
 
 struct VoiceCommands {
     public static let standInsideBBox = Text2Speech(text: "Stand so that your whole body is inside the bounding box")
-    public static let letUsStartTheExercise = Text2Speech(text: "Now let's start the exercise")
 }
 
 class SessionData: ObservableObject {
@@ -42,7 +41,7 @@ struct QuickPoseBasicView: View {
     let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
-    @State var state = WorkoutState.bbox
+    @State var state = WorkoutState.exercise
     
     @State private var indicatorWidth: CGFloat = 0.0
     
@@ -175,7 +174,7 @@ struct QuickPoseBasicView: View {
                         }
                         
                         if (state == WorkoutState.exercise && !exerciseTimer.isRunning()) {
-                            VoiceCommands.letUsStartTheExercise.say()
+                            Text2Speech(text: "Now let's start the \(exercise.name) exercise").say()
                             exerciseTimer.start()
                         }
                         
