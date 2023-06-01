@@ -12,21 +12,38 @@ struct WorkoutResultsView: View {
     @EnvironmentObject var viewModel: ViewModel
     
     var body: some View {
-        VStack{
-            
-            Text("Count: " + String(sessionData.count))
-            Text("Time: " + String(sessionData.seconds))
-            
-            Button {
-                viewModel.path.removeLast(viewModel.path.count)
-            } label: {
-                Text("Finish workout")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(.indigo) // Set background color to the main color
-                    .cornerRadius(8) // Add corner radius for a rounded look
-            }.padding()
+        NavigationView{
+            VStack() {
+                Text("Number of reps: \(sessionData.count)")
+                    .font(.title)
+                    .padding(.top, 50)
+                    .padding(.bottom, 20)
+                
+                Text("Time: \(sessionData.seconds) Seconds")
+                    .font(.title2)
+                    .padding(.bottom, 40)
+                
+                Button(action: {
+                    viewModel.path.removeLast(viewModel.path.count)
+                }) {
+                    Text("Finish Workout")
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.indigo)
+                        .cornerRadius(8)
+                }
+                .padding()
+                .buttonStyle(PlainButtonStyle()) // Remove button style highlighting
+                
+                Spacer()
+            }
+            .navigationBarTitle("Results")
+            .navigationBarBackButtonHidden(true)
+            .padding()
+            .background(Color.white) // Set the background color of the entire view
+//            .padding([.leading, .trailing], 24)
         }
-        .navigationBarBackButtonHidden(true)
     }
 }

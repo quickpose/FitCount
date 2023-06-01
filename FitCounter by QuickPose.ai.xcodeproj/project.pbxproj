@@ -59,7 +59,7 @@
 		927261A32A24EF0B00C3B390 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPoseBasicView.swift; sourceTree = "<group>"; };
 		92C703032A1D049E002ECC0B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		92CACFCD2A1B7DD100DA2B40 /* FitCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92CACFCD2A1B7DD100DA2B40 /* FitCounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitCountApp.swift; sourceTree = "<group>"; };
 		92CACFD22A1B7DD100DA2B40 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		92CACFD42A1B7DD100DA2B40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -146,7 +146,7 @@
 		92CACFCE2A1B7DD100DA2B40 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				92CACFCD2A1B7DD100DA2B40 /* FitCount.app */,
+				92CACFCD2A1B7DD100DA2B40 /* FitCounter.app */,
 				92CACFDD2A1B7DD200DA2B40 /* FitCountTests.xctest */,
 				92CACFE72A1B7DD200DA2B40 /* FitCountUITests.xctest */,
 			);
@@ -199,9 +199,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		92CACFCC2A1B7DD100DA2B40 /* FitCount */ = {
+		92CACFCC2A1B7DD100DA2B40 /* FitCounter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCount" */;
+			buildConfigurationList = 92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCounter" */;
 			buildPhases = (
 				92CACFC92A1B7DD100DA2B40 /* Sources */,
 				92CACFCA2A1B7DD100DA2B40 /* Frameworks */,
@@ -211,7 +211,7 @@
 			);
 			dependencies = (
 			);
-			name = FitCount;
+			name = FitCounter;
 			packageProductDependencies = (
 				92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */,
 				92C702FD2A1BC74A002ECC0B /* QuickPoseCore */,
@@ -220,7 +220,7 @@
 				920A3EF52A20B14100EC6FC9 /* PagerTabStripView */,
 			);
 			productName = FitCount;
-			productReference = 92CACFCD2A1B7DD100DA2B40 /* FitCount.app */;
+			productReference = 92CACFCD2A1B7DD100DA2B40 /* FitCounter.app */;
 			productType = "com.apple.product-type.application";
 		};
 		92CACFDC2A1B7DD200DA2B40 /* FitCountTests */ = {
@@ -282,7 +282,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCount" */;
+			buildConfigurationList = 92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCounter by QuickPose.ai" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -299,7 +299,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				92CACFCC2A1B7DD100DA2B40 /* FitCount */,
+				92CACFCC2A1B7DD100DA2B40 /* FitCounter */,
 				92CACFDC2A1B7DD200DA2B40 /* FitCountTests */,
 				92CACFE62A1B7DD200DA2B40 /* FitCountUITests */,
 			);
@@ -375,12 +375,12 @@
 /* Begin PBXTargetDependency section */
 		92CACFDF2A1B7DD200DA2B40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 92CACFCC2A1B7DD100DA2B40 /* FitCount */;
+			target = 92CACFCC2A1B7DD100DA2B40 /* FitCounter */;
 			targetProxy = 92CACFDE2A1B7DD200DA2B40 /* PBXContainerItemProxy */;
 		};
 		92CACFE92A1B7DD200DA2B40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 92CACFCC2A1B7DD100DA2B40 /* FitCount */;
+			target = 92CACFCC2A1B7DD100DA2B40 /* FitCounter */;
 			targetProxy = 92CACFE82A1B7DD200DA2B40 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -523,7 +523,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2;
+				MARKETING_VERSION = 0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.FitCount;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -555,7 +555,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2;
+				MARKETING_VERSION = 0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.FitCount;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -643,7 +643,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCount" */ = {
+		92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCounter by QuickPose.ai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				92CACFEF2A1B7DD200DA2B40 /* Debug */,
@@ -652,7 +652,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCount" */ = {
+		92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCounter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				92CACFF22A1B7DD200DA2B40 /* Debug */,

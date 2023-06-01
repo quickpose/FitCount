@@ -22,9 +22,9 @@ struct TitleNavBarItem: View {
 }
 
 class SessionConfig: ObservableObject {
-    @Published var nReps : Int = 0
+    @Published var nReps : Int = 1
     @Published var nMinutes : Int = 0
-    @Published var nSeconds : Int = 0
+    @Published var nSeconds : Int = 1
     
     @Published var useReps: Bool = true
 }
@@ -32,7 +32,7 @@ class SessionConfig: ObservableObject {
 
 struct ExerciseDetailsView: View {
     @EnvironmentObject var viewModel: ViewModel
-    @StateObject var sessionConfig: SessionConfig = SessionConfig()
+    @EnvironmentObject var sessionConfig: SessionConfig
     
     let exercise: Exercise
     

@@ -19,7 +19,7 @@ struct HistoryView: View {
             VStack {
                 if let sessionDataArray = sessionDataArray {
                     ScrollView {
-                        ForEach(sessionDataArray, id: \.self) { sessionData in
+                        ForEach(sessionDataArray.reversed(), id: \.self) { sessionData in
                             Text(sessionData.exercise)
                             Text("\(sessionData.count) reps")
                             Text("\(sessionData.seconds) sec")

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
+    @StateObject var sessionConfig: SessionConfig = SessionConfig()
     
     
     var body: some View {
@@ -25,7 +26,7 @@ struct ContentView: View {
                                 .padding()
                                 .cornerRadius(8) // Add corner radius for a rounded look
                             }.navigationDestination(for: Exercise.self) { exercise in
-                                ExerciseDetailsView(exercise: exercise).environmentObject(viewModel)
+                                ExerciseDetailsView(exercise: exercise).environmentObject(viewModel).environmentObject(sessionConfig)
                             }
                         }
                         .background(.white)

@@ -89,7 +89,7 @@ struct QuickPoseBasicView: View {
                                 .padding(16)
                                 .scaleEffect(countScale)
                             
-                            Text(String(seconds) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds) : "") + " sec")
+                            Text(String(seconds) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds + sessionConfig.nMinutes * 60) : "") + " sec")
                                 .font(.system(size: 30, weight: .semibold))
                                 .padding(16)
                         }

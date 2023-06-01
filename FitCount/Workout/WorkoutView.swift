@@ -14,9 +14,6 @@ struct WorkoutView: View {
     
     @State var cameraPermissionGranted = false
     var exercise: Exercise
-//    var nReps: Int?
-//    var nSeconds: Int?
-    
     
     var body: some View {
         GeometryReader { geometry in
