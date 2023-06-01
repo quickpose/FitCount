@@ -27,9 +27,8 @@ enum WorkoutState {
 struct QuickPoseBasicView: View {
     private var quickPose = QuickPose(sdkKey: "01H122Z3J6NY33V548V2D55K3J") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var sessionConfig: SessionConfig
     
-    private var nReps: Int?
-    private var nSeconds: Int?
     private var exercise: Exercise
     
     @State private var overlayImage: UIImage?
@@ -43,7 +42,7 @@ struct QuickPoseBasicView: View {
     let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
-    @State var state = WorkoutState.exercise
+    @State var state = WorkoutState.bbox
     
     @State private var indicatorWidth: CGFloat = 0.0
     
@@ -55,10 +54,8 @@ struct QuickPoseBasicView: View {
     
     let bboxTimer = TimerManager()
     
-    init(exercise: Exercise, nReps: Int?, nSeconds: Int?) {
+    init(exercise: Exercise) {
         self.exercise = exercise
-        self.nReps = nReps
-        self.nSeconds = nSeconds
     }
     
     var body: some View {
@@ -86,22 +83,20 @@ struct QuickPoseBasicView: View {
                 
                 .overlay(alignment: .bottom) {
                     if (state == WorkoutState.exercise) {
-                        Text("Reps: " + String(count))
-                            .font(.system(size: 26, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(16)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .scaleEffect(countScale)
-                    }
-                }
-                .overlay(alignment: .top) {
-                    Text("Time: " + String(seconds) + " sec")
-                        .font(.system(size: 26, weight: .semibold))
+                        HStack {
+                            Text(String(count) + (sessionConfig.useReps ? " \\ " + String(sessionConfig.nReps) : "") + " reps")
+                                .font(.system(size: 30, weight: .semibold))
+                                .padding(16)
+                                .scaleEffect(countScale)
+                            
+                            Text(String(seconds) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds) : "") + " sec")
+                                .font(.system(size: 30, weight: .semibold))
+                                .padding(16)
+                        }
+                        .frame(maxWidth: .infinity)
                         .foregroundColor(.white)
-                        .padding(16)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                        .background(.indigo)
+                    }
                 }
                 .overlay(alignment: .center) {
                     if (state == WorkoutState.exercise) {
@@ -189,7 +184,7 @@ struct QuickPoseBasicView: View {
                                 }
                                 count = counter.getCount()
                                 
-                                if (nReps != nil && count >= nReps! || nSeconds != nil && Int(exerciseTimer.getTotalSeconds()) >= nSeconds!) {
+                                if (sessionConfig.useReps && count >= sessionConfig.nReps || !sessionConfig.useReps && Int(exerciseTimer.getTotalSeconds()) >= (sessionConfig.nSeconds + sessionConfig.nMinutes * 60)) {
                                     DispatchQueue.main.async {
                                         sessionData.seconds = Int(exerciseTimer.getTotalSeconds())
                                         sessionData.count = Int(counter.getCount())

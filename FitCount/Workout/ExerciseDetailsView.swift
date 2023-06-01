@@ -21,15 +21,20 @@ struct TitleNavBarItem: View {
     }
 }
 
+class SessionConfig: ObservableObject {
+    @Published var nReps : Int = 0
+    @Published var nMinutes : Int = 0
+    @Published var nSeconds : Int = 0
+    
+    @Published var useReps: Bool = true
+}
+
 
 struct ExerciseDetailsView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @StateObject var sessionConfig: SessionConfig = SessionConfig()
     
     let exercise: Exercise
-    
-    @State private var nReps : Int = 1
-    @State private var nMinutes : Int = 1
-    @State private var nSeconds: Int = 0
     
     @State var selection = 1
     
@@ -52,7 +57,7 @@ struct ExerciseDetailsView: View {
                         .font(.headline)
                         .padding(.top, 8)
                     
-                    Picker("Reps", selection: $nReps) {
+                    Picker("Reps", selection: $sessionConfig.nReps) {
                         ForEach(1...100, id: \.self) { number in
                             Text("\(number) reps")
                         }
@@ -74,30 +79,30 @@ struct ExerciseDetailsView: View {
                     
                     HStack{
                         
-                        Picker("Minutes", selection: $nMinutes) {
+                        Picker("Minutes", selection: $sessionConfig.nMinutes) {
                             ForEach(0...30, id: \.self) { number in
                                 Text("\(number) min")
                             }
                         }
-                        .onChange(of: nMinutes) { min in
+                        .onChange(of: sessionConfig.nMinutes) { min in
                             // make sure that time is not 0
-                            if (min <= 0 && nSeconds <= 0) {
-                                nMinutes = 0
-                                nSeconds = 1
+                            if (min <= 0 && sessionConfig.nSeconds <= 0) {
+                                sessionConfig.nMinutes = 0
+                                sessionConfig.nSeconds = 1
                             }
                         }
                         .pickerStyle(WheelPickerStyle())
                         
-                        Picker("Seconds", selection: $nSeconds) {
+                        Picker("Seconds", selection: $sessionConfig.nSeconds) {
                             ForEach(0...59, id: \.self) { number in
                                 Text("\(number) sec")
                             }
                         }
-                        .onChange(of: nSeconds) { sec in
+                        .onChange(of: sessionConfig.nSeconds) { sec in
                             // make sure that time is not 0
-                            if (nMinutes <= 0 && sec <= 0) {
-                                nMinutes = 1
-                                nSeconds = 0
+                            if (sessionConfig.nMinutes <= 0 && sec <= 0) {
+                                sessionConfig.nMinutes = 1
+                                sessionConfig.nSeconds = 0
                             }
                         }
                         .pickerStyle(WheelPickerStyle())
@@ -108,9 +113,13 @@ struct ExerciseDetailsView: View {
                 .clipped()
                 .cornerRadius(10)
                 .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-                .padding().pagerTabItem(tag: 2) {
+                .padding()
+                .pagerTabItem(tag: 2) {
                     TitleNavBarItem(title: "Timer")
                 }
+            }
+            .onChange(of: selection) { newValue in
+                sessionConfig.useReps = newValue == 1
             }
             
             NavigationLink(value: "Workout") {
@@ -122,7 +131,7 @@ struct ExerciseDetailsView: View {
                 
             }
             .navigationDestination(for: String.self) { _ in
-                WorkoutView(exercise: exercise, nReps: selection == 1 ? nReps : nil, nSeconds: selection == 2 ? nMinutes * 60 + nSeconds : nil).environmentObject(viewModel)
+                WorkoutView(exercise: exercise).environmentObject(viewModel).environmentObject(sessionConfig)
             }
             
             
@@ -130,9 +139,3 @@ struct ExerciseDetailsView: View {
         .navigationBarTitle(Text(exercise.name))
     }
 }
-
-//struct ExerciseDetailsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ExerciseDetailsView(exercise: Exercise(name: "Exercise 1", details: "Exercise 1 details"))
-//    }
-//}
