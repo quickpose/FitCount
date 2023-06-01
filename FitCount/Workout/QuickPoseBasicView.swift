@@ -41,7 +41,7 @@ struct QuickPoseBasicView: View {
     let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
-    @State var state = WorkoutState.exercise
+    @State var state = WorkoutState.bbox
     
     @State private var indicatorWidth: CGFloat = 0.0
     
