@@ -43,7 +43,7 @@ struct QuickPoseBasicView: View {
     let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
-    @State var state = WorkoutState.bbox
+    @State var state = WorkoutState.exercise
     
     @State private var indicatorWidth: CGFloat = 0.0
     
@@ -206,11 +206,15 @@ struct QuickPoseBasicView: View {
                             overlayImage = nil
                         }
                     })
-                }.onDisappear {
+                }.onAppear() {
+                    UIApplication.shared.isIdleTimerDisabled = true
+                }
+                .onDisappear {
                     let sessionDataDump = SessionDataModel(exercise: exercise.name, count: Int(counter.getCount()), seconds: Int(exerciseTimer.getTotalSeconds()), date: Date())
                     appendToJson(sessionData: sessionDataDump)
                     
                     quickPose.stop()
+                    UIApplication.shared.isIdleTimerDisabled = false
                 }
             }
         }
