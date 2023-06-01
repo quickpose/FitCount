@@ -58,6 +58,15 @@ struct QuickPoseBasicView: View {
         self.exercise = exercise
     }
     
+    func goToResults() {
+        DispatchQueue.main.async {
+            sessionData.seconds = Int(exerciseTimer.getTotalSeconds())
+            sessionData.count = Int(counter.getCount())
+            
+            isActive = true // Set the state variable to trigger the navigation
+        }
+    }
+    
     var body: some View {
         VStack{
             NavigationLink(value: "Workout results") {
@@ -79,6 +88,16 @@ struct QuickPoseBasicView: View {
                     if (state == WorkoutState.bbox) {
                         BoundingBoxView(isInBBox: isInBBox, indicatorWidth: indicatorWidth)
                     }
+                }
+                .overlay(alignment: .topTrailing) {
+                    Button(action: {
+                        goToResults()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 44))
+                            .foregroundColor(.indigo)
+                    }
+                    .padding()
                 }
                 
                 .overlay(alignment: .bottom) {
@@ -185,12 +204,7 @@ struct QuickPoseBasicView: View {
                                 count = counter.getCount()
                                 
                                 if (sessionConfig.useReps && count >= sessionConfig.nReps || !sessionConfig.useReps && Int(exerciseTimer.getTotalSeconds()) >= (sessionConfig.nSeconds + sessionConfig.nMinutes * 60)) {
-                                    DispatchQueue.main.async {
-                                        sessionData.seconds = Int(exerciseTimer.getTotalSeconds())
-                                        sessionData.count = Int(counter.getCount())
-                                        
-                                        isActive = true // Set the state variable to trigger the navigation
-                                    }
+                                    goToResults()
                                 }
                                 measure = result.value
                             }
