@@ -20,29 +20,52 @@ struct HistoryView: View {
                 if let sessionDataArray = sessionDataArray {
                     ScrollView {
                         ForEach(sessionDataArray.reversed(), id: \.self) { sessionData in
-                            Text(sessionData.exercise)
-                            Text("\(sessionData.count) reps")
-                            Text("\(sessionData.seconds) sec")
-                            Text(sessionData.date.formatted(
-                                .dateTime
-                                    .day(.defaultDigits)
-                                    .month(.abbreviated)
-                                    .year(.defaultDigits)
-                            ))
+                            HStack(spacing: 16) {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(sessionData.exercise)
+                                        .font(.title)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.indigo)
+                                    
+                                    Text(sessionData.date.formatted(
+                                        .dateTime
+                                            .day(.defaultDigits)
+                                            .month(.abbreviated)
+                                            .year(.defaultDigits)
+                                    ))
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                }
+                                
+                                Spacer()
+                                
+                                VStack(alignment: .trailing, spacing: 8) {
+                                    Text("\(sessionData.count) reps")
+                                        .font(.title2)
+                                    
+                                    Text("\(sessionData.seconds) sec")
+                                        .font(.title2)
+                                    
+                                    
+                                }
+                            }
+                            
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .cornerRadius(8)
                             Divider()
                         }
                     }
-                    .padding(10)
+                    .padding(.horizontal, 16)
                 } else {
                     Text("No data to display.")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding(16)
                 }
-            }.navigationBarTitle("History")
+            }
+            .navigationBarTitle("History")
         }
+        
     }
 }
-
-//struct HistoryView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HistoryView()
-//    }
-//}

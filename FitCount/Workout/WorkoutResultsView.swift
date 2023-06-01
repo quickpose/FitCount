@@ -13,9 +13,13 @@ struct WorkoutResultsView: View {
     
     var body: some View {
         NavigationView{
-            VStack() {
+            VStack(spacing: 20) {
+                Text("Your workour results")
+                    .font(.largeTitle)
+                    .padding(.top, 50)
+                
                 Text("Number of reps: \(sessionData.count)")
-                    .font(.title)
+                    .font(.title2)
                     .padding(.top, 50)
                     .padding(.bottom, 20)
                 
@@ -39,11 +43,10 @@ struct WorkoutResultsView: View {
                 
                 Spacer()
             }
-            .navigationBarTitle("Results")
             .navigationBarBackButtonHidden(true)
+//            .navigationBarTitle("Results")
             .padding()
-            .background(Color.white) // Set the background color of the entire view
-//            .padding([.leading, .trailing], 24)
+            .background(Color.white)
         }
     }
 }
