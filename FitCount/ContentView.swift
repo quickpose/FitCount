@@ -38,6 +38,10 @@ struct ContentView: View {
                 HistoryView().tabItem{
                     Label("History", systemImage: "chart.bar")
                 }
+                
+                AboutView().tabItem{
+                    Label("About", systemImage: "info.square")
+                }
             }
         }
     }
