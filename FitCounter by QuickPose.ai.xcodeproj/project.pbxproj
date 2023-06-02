@@ -14,6 +14,7 @@
 		920A3EF62A20B14100EC6FC9 /* PagerTabStripView in Frameworks */ = {isa = PBXBuildFile; productRef = 920A3EF52A20B14100EC6FC9 /* PagerTabStripView */; };
 		924D6E222A264B3600227183 /* JsonWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D6E212A264B3600227183 /* JsonWriter.swift */; };
 		924D6E252A289ED700227183 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D6E242A289ED700227183 /* AboutView.swift */; };
+		924D6E282A29F90400227183 /* VolumeChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D6E272A29F90400227183 /* VolumeChangeView.swift */; };
 		927261A42A24EF0B00C3B390 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927261A32A24EF0B00C3B390 /* HistoryView.swift */; };
 		92C702F92A1BC705002ECC0B /* QuickPoseBasicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */; };
 		92C702FC2A1BC74A002ECC0B /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = 92C702FB2A1BC74A002ECC0B /* QuickPoseCamera */; };
@@ -56,6 +57,7 @@
 		920A3EF22A1F801A00EC6FC9 /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
 		924D6E212A264B3600227183 /* JsonWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonWriter.swift; sourceTree = "<group>"; };
 		924D6E242A289ED700227183 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		924D6E272A29F90400227183 /* VolumeChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeChangeView.swift; sourceTree = "<group>"; };
 		927261A32A24EF0B00C3B390 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPoseBasicView.swift; sourceTree = "<group>"; };
 		92C703032A1D049E002ECC0B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 				920A3EEE2A1F76F800EC6FC9 /* BoundingBoxView.swift */,
 				920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */,
 				920A3EF22A1F801A00EC6FC9 /* Workout.swift */,
+				924D6E272A29F90400227183 /* VolumeChangeView.swift */,
 			);
 			path = Workout;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */,
 				920A3EEF2A1F76F800EC6FC9 /* BoundingBoxView.swift in Sources */,
 				920A3EF32A1F801A00EC6FC9 /* Workout.swift in Sources */,
+				924D6E282A29F90400227183 /* VolumeChangeView.swift in Sources */,
 				924D6E252A289ED700227183 /* AboutView.swift in Sources */,
 				920A3EF12A1F7C2300EC6FC9 /* WorkoutResultsView.swift in Sources */,
 				927261A42A24EF0B00C3B390 /* HistoryView.swift in Sources */,

@@ -19,6 +19,8 @@ class SessionData: ObservableObject {
 }
 
 enum WorkoutState {
+    case volume
+    case instructions
     case bbox
     case exercise
 }
@@ -41,7 +43,7 @@ struct QuickPoseBasicView: View {
     let exerciseTimer = TimerManager()
     
     @State var isInBBox = false
-    @State var state = WorkoutState.bbox
+    @State var state = WorkoutState.volume
     
     @State private var indicatorWidth: CGFloat = 0.0
     
@@ -84,6 +86,20 @@ struct QuickPoseBasicView: View {
                 .frame(width: geometry.safeAreaInsets.leading + geometry.size.width + geometry.safeAreaInsets.trailing)
                 .edgesIgnoringSafeArea(.all)
                 .overlay() {
+                    if (state == WorkoutState.volume) {
+                        VolumeChangeView().overlay(alignment: .bottom) {
+                            Button (action: {
+                                state = WorkoutState.bbox
+                                VoiceCommands.standInsideBBox.say()
+                            }) {
+                                Text("Continue").foregroundColor(.white)
+                                    .padding()
+                                    .background(.indigo) // Set background color to the main color
+                                    .cornerRadius(8) // Add corner radius for a rounded look
+                            }
+                        }
+                    }
+                    
                     if (state == WorkoutState.bbox) {
                         BoundingBoxView(isInBBox: isInBBox, indicatorWidth: indicatorWidth)
                     }
@@ -128,7 +144,7 @@ struct QuickPoseBasicView: View {
                 .onAppear {
                     quickPose.start(features: exercise.features, onFrame: { status, image, features, feedback, landmarks in
                         
-                        VoiceCommands.standInsideBBox.say()
+                        
                         
                         let width = geometry.size.width * 0.6
                         let height = geometry.size.height * 0.8
