@@ -48,7 +48,7 @@ struct VolumeChangeView: View {
                 .ignoresSafeArea()
                 .overlay(
                     VStack (spacing: 30){
-                        Text("FiCounter provides real-time voice feedback")
+                        Text("FitCounter provides real-time voice feedback")
                             .font(.title)
                             .multilineTextAlignment(.center)
                         Text("Please turn on the sound on your device")
