@@ -89,10 +89,24 @@ struct QuickPoseBasicView: View {
                     if (state == WorkoutState.volume) {
                         VolumeChangeView().overlay(alignment: .bottom) {
                             Button (action: {
+                                state = WorkoutState.instructions
+                                
+                            }) {
+                                Text("Continue").foregroundColor(.white)
+                                    .padding()
+                                    .background(.indigo) // Set background color to the main color
+                                    .cornerRadius(8) // Add corner radius for a rounded look
+                            }
+                        }
+                    }
+                    
+                    if (state == WorkoutState.instructions) {
+                        InstructionsView().overlay(alignment: .bottom) {
+                            Button (action: {
                                 state = WorkoutState.bbox
                                 VoiceCommands.standInsideBBox.say()
                             }) {
-                                Text("Continue").foregroundColor(.white)
+                                Text("Start Workout").foregroundColor(.white)
                                     .padding()
                                     .background(.indigo) // Set background color to the main color
                                     .cornerRadius(8) // Add corner radius for a rounded look

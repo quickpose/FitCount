@@ -12,6 +12,7 @@
 		920A3EF12A1F7C2300EC6FC9 /* WorkoutResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */; };
 		920A3EF32A1F801A00EC6FC9 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A3EF22A1F801A00EC6FC9 /* Workout.swift */; };
 		920A3EF62A20B14100EC6FC9 /* PagerTabStripView in Frameworks */ = {isa = PBXBuildFile; productRef = 920A3EF52A20B14100EC6FC9 /* PagerTabStripView */; };
+		9215905F2A2A10BF001254BC /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9215905E2A2A10BF001254BC /* InstructionsView.swift */; };
 		924D6E222A264B3600227183 /* JsonWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D6E212A264B3600227183 /* JsonWriter.swift */; };
 		924D6E252A289ED700227183 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D6E242A289ED700227183 /* AboutView.swift */; };
 		924D6E282A29F90400227183 /* VolumeChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D6E272A29F90400227183 /* VolumeChangeView.swift */; };
@@ -55,6 +56,7 @@
 		920A3EEE2A1F76F800EC6FC9 /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutResultsView.swift; sourceTree = "<group>"; };
 		920A3EF22A1F801A00EC6FC9 /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
+		9215905E2A2A10BF001254BC /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 		924D6E212A264B3600227183 /* JsonWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonWriter.swift; sourceTree = "<group>"; };
 		924D6E242A289ED700227183 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		924D6E272A29F90400227183 /* VolumeChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeChangeView.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				920A3EF02A1F7C2300EC6FC9 /* WorkoutResultsView.swift */,
 				920A3EF22A1F801A00EC6FC9 /* Workout.swift */,
 				924D6E272A29F90400227183 /* VolumeChangeView.swift */,
+				9215905E2A2A10BF001254BC /* InstructionsView.swift */,
 			);
 			path = Workout;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92CACFD32A1B7DD100DA2B40 /* ContentView.swift in Sources */,
+				9215905F2A2A10BF001254BC /* InstructionsView.swift in Sources */,
 				92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */,
 				920A3EEF2A1F76F800EC6FC9 /* BoundingBoxView.swift in Sources */,
 				920A3EF32A1F801A00EC6FC9 /* Workout.swift in Sources */,
