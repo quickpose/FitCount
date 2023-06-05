@@ -13,12 +13,11 @@ struct WorkoutView: View {
     @EnvironmentObject var sessionConfig: SessionConfig
     
     @State var cameraPermissionGranted = false
-    var exercise: Exercise
     
     var body: some View {
         GeometryReader { geometry in
             if cameraPermissionGranted {
-                QuickPoseBasicView(exercise: exercise).environmentObject(viewModel).environmentObject(sessionConfig)
+                QuickPoseBasicView().environmentObject(viewModel).environmentObject(sessionConfig)
             }
         }.onAppear {
             AVCaptureDevice.requestAccess(for: .video) { accessGranted in

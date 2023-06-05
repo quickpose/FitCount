@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+
+class SessionConfig: ObservableObject {
+    @Published var nReps : Int = 1
+    @Published var nMinutes : Int = 0
+    @Published var nSeconds : Int = 1
+    
+    @Published var useReps: Bool = true
+    @Published var exercise: Exercise = exercises[0] // use first exercise by default but change in the ExerciseDetailsView
+}
+
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
     @StateObject var sessionConfig: SessionConfig = SessionConfig()

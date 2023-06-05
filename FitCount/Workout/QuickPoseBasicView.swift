@@ -10,7 +10,7 @@ import QuickPoseCore
 import QuickPoseSwiftUI
 
 struct VoiceCommands {
-    public static let standInsideBBox = Text2Speech(text: "Stand so that your whole body is inside the bounding box")
+    public static let standInsideBBox = "Stand so that your whole body is inside the bounding box"
 }
 
 class SessionData: ObservableObject {
@@ -29,8 +29,6 @@ struct QuickPoseBasicView: View {
     private var quickPose = QuickPose(sdkKey: "01H122Z3J6NY33V548V2D55K3J") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
-    
-    private var exercise: Exercise
     
     @State private var overlayImage: UIImage?
     
@@ -54,10 +52,6 @@ struct QuickPoseBasicView: View {
     @State private var isActive: Bool = false
     
     let bboxTimer = TimerManager()
-    
-    init(exercise: Exercise) {
-        self.exercise = exercise
-    }
     
     func goToResults() {
         DispatchQueue.main.async {
@@ -104,7 +98,7 @@ struct QuickPoseBasicView: View {
                         InstructionsView().overlay(alignment: .bottom) {
                             Button (action: {
                                 state = WorkoutState.bbox
-                                VoiceCommands.standInsideBBox.say()
+                                Text2Speech(text: VoiceCommands.standInsideBBox).say()
                             }) {
                                 Text("Start Workout").foregroundColor(.white)
                                     .padding()
@@ -156,7 +150,7 @@ struct QuickPoseBasicView: View {
                     }
                 }
                 .onAppear {
-                    quickPose.start(features: exercise.features, onFrame: { status, image, features, feedback, landmarks in
+                    quickPose.start(features: sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
                         
                         
                         
@@ -204,7 +198,7 @@ struct QuickPoseBasicView: View {
                         }
                         
                         if (state == WorkoutState.exercise && !exerciseTimer.isRunning()) {
-                            Text2Speech(text: "Now let's start the \(exercise.name) exercise").say()
+                            Text2Speech(text: "Now let's start the \(sessionConfig.exercise.name) exercise").say()
                             exerciseTimer.start()
                         }
                         
@@ -217,7 +211,7 @@ struct QuickPoseBasicView: View {
                                 feedbackText = nil
                             }
                             
-                            if case .fitness = exercise.features.first, let result = features[exercise.features.first!]{
+                            if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!]{
                                 counter.count(probability: result.value)
                                 if (counter.getCount() > count) {
                                     Text2Speech(text: String(counter.getCount())).say()
@@ -248,7 +242,7 @@ struct QuickPoseBasicView: View {
                     UIApplication.shared.isIdleTimerDisabled = true
                 }
                 .onDisappear {
-                    let sessionDataDump = SessionDataModel(exercise: exercise.name, count: Int(counter.getCount()), seconds: Int(exerciseTimer.getTotalSeconds()), date: Date())
+                    let sessionDataDump = SessionDataModel(exercise: sessionConfig.exercise.name, count: Int(counter.getCount()), seconds: Int(exerciseTimer.getTotalSeconds()), date: Date())
                     appendToJson(sessionData: sessionDataDump)
                     
                     quickPose.stop()

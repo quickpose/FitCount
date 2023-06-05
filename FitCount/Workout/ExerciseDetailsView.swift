@@ -21,15 +21,6 @@ struct TitleNavBarItem: View {
     }
 }
 
-class SessionConfig: ObservableObject {
-    @Published var nReps : Int = 1
-    @Published var nMinutes : Int = 0
-    @Published var nSeconds : Int = 1
-    
-    @Published var useReps: Bool = true
-}
-
-
 struct ExerciseDetailsView: View {
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
@@ -131,11 +122,15 @@ struct ExerciseDetailsView: View {
                 
             }
             .navigationDestination(for: String.self) { _ in
-                WorkoutView(exercise: exercise).environmentObject(viewModel).environmentObject(sessionConfig)
+                WorkoutView().environmentObject(viewModel).environmentObject(sessionConfig)
             }
             
             
         }
         .navigationBarTitle(Text(exercise.name))
+        .onAppear() {
+            sessionConfig.exercise = exercise
+            sessionConfig.useReps = selection == 1
+        }
     }
 }
