@@ -9,33 +9,6 @@ import SwiftUI
 import MediaPlayer
 import AVFoundation
 
-
-func setSystemVolume(_ volume: Float) {
-    let volumeView = MPVolumeView()
-    let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
-    
-    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-        slider?.setValue(volume, animated: false)
-    }
-}
-
-
-
-func getCurrentVolume() -> Float {
-    let audioSession = AVAudioSession.sharedInstance()
-    
-    do {
-        try audioSession.setActive(true)
-        
-        let volume = audioSession.outputVolume
-        return volume
-    } catch {
-        print("Failed to get current volume: \(error)")
-        return 0.0
-    }
-}
-
-
 struct VolumeChangeView: View {
     @State private var soundLevel: Float = getCurrentVolume()
     
@@ -55,26 +28,46 @@ struct VolumeChangeView: View {
                         HStack {
                             Image(systemName: "speaker.wave.1")
                                 .font(.system(size: 30))
-                                .foregroundColor(.indigo)
+                                .foregroundColor(Color("AccentColor"))
                             
                             Slider(value: $soundLevel, in: 0...1, step: 0.01, onEditingChanged: { data in
-                                setSystemVolume(self.soundLevel)
+                                VolumeChangeView.setSystemVolume(self.soundLevel)
                             })
                             .tint(soundLevel < 0.5 ? .red : .green)
                             
                             Image(systemName: "speaker.wave.3")
                                 .font(.system(size: 30))
-                                .foregroundColor(.indigo)
+                                .foregroundColor(Color("AccentColor"))
                             
                         }
                     }.frame(width: 300)
                 )
         }
     }
-}
+    
+    static func setSystemVolume(_ volume: Float) {
+        let volumeView = MPVolumeView()
+        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            slider?.setValue(volume, animated: false)
+        }
+    }
 
-struct VolumeChangeView_Previews: PreviewProvider {
-    static var previews: some View {
-        VolumeChangeView()
+    static func getCurrentVolume() -> Float {
+        let audioSession = AVAudioSession.sharedInstance()
+        
+        do {
+            try audioSession.setActive(true)
+            
+            let volume = audioSession.outputVolume
+            return volume
+        } catch {
+            print("Failed to get current volume: \(error)")
+            return 0.0
+        }
     }
 }
+
+
+

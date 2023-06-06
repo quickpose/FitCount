@@ -25,7 +25,7 @@ struct HistoryView: View {
                                     Text(sessionData.exercise)
                                         .font(.title)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.indigo)
+                                        .foregroundColor(Color("AccentColor"))
                                     
                                     Text(sessionData.date.formatted(
                                         .dateTime

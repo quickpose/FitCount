@@ -8,7 +8,6 @@
 import SwiftUI
 import PagerTabStripView
 
-
 struct TitleNavBarItem: View {
     let title: String
     
@@ -35,7 +34,6 @@ struct ExerciseDetailsView: View {
             Text(exercise.details)
                 .font(.body)
                 .padding()
-            
             
             Spacer()
             
@@ -117,8 +115,8 @@ struct ExerciseDetailsView: View {
                 Text("Start workout")
                     .foregroundColor(.white)
                     .padding()
-                    .background(.indigo) // Set background color to the main color
-                    .cornerRadius(8) // Add corner radius for a rounded look
+                    .background(Color("AccentColor"))
+                    .cornerRadius(8)
                 
             }
             .navigationDestination(for: String.self) { _ in

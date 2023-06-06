@@ -12,15 +12,13 @@ class SessionConfig: ObservableObject {
     @Published var nReps : Int = 1
     @Published var nMinutes : Int = 0
     @Published var nSeconds : Int = 1
-    
     @Published var useReps: Bool = true
     @Published var exercise: Exercise = exercises[0] // use first exercise by default but change in the ExerciseDetailsView
 }
 
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
-    @StateObject var sessionConfig: SessionConfig = SessionConfig()
-    
+    @StateObject var sessionConfig = SessionConfig()
     
     var body: some View {
         NavigationStack(path: $viewModel.path) {
@@ -34,9 +32,11 @@ struct ContentView: View {
                                         .font(.headline)
                                 }
                                 .padding()
-                                .cornerRadius(8) // Add corner radius for a rounded look
+                                .cornerRadius(8)
                             }.navigationDestination(for: Exercise.self) { exercise in
-                                ExerciseDetailsView(exercise: exercise).environmentObject(viewModel).environmentObject(sessionConfig)
+                                ExerciseDetailsView(exercise: exercise)
+                                    .environmentObject(viewModel)
+                                    .environmentObject(sessionConfig)
                             }
                         }
                         .background(.white)
@@ -60,13 +60,9 @@ struct ContentView: View {
 
 
 class ViewModel: ObservableObject {
-    @Published var path: NavigationPath = NavigationPath()
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    @Published var path = NavigationPath()
+    
+    func popToRoot(){
+        path.removeLast(path.count) // pop to root
     }
 }
-
-

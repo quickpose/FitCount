@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct WorkoutResultsView: View {
-    @EnvironmentObject var sessionData: SessionData
+    let sessionData: SessionData
+    
     @EnvironmentObject var viewModel: ViewModel
     
     var body: some View {
         NavigationView{
             VStack(spacing: 20) {
-                Text("Your workour results")
+                Text("Your workout results")
                     .font(.largeTitle)
                     .padding(.top, 50)
                 
@@ -28,14 +29,14 @@ struct WorkoutResultsView: View {
                     .padding(.bottom, 40)
                 
                 Button(action: {
-                    viewModel.path.removeLast(viewModel.path.count)
+                    viewModel.popToRoot()
                 }) {
                     Text("Finish Workout")
                         .foregroundColor(.white)
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.indigo)
+                        .background(Color("AccentColor"))
                         .cornerRadius(8)
                 }
                 .padding()
