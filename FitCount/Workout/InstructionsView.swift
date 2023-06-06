@@ -2,7 +2,7 @@
 //  InstructionsView.swift
 //  FitCounter
 //
-//  Created by Денис Волхонский on 02.06.2023.
+//  Created by QuickPose.ai on 02.06.2023.
 //
 
 import SwiftUI
@@ -10,7 +10,7 @@ import SwiftUI
 struct InstructionsView: View {
     var body: some View {
         VStack {
-            Color.white
+            Color(UIColor.systemBackground)
                 .ignoresSafeArea()
                 .overlay(
                     VStack (spacing: 30){

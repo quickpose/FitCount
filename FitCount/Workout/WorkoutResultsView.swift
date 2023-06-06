@@ -44,9 +44,8 @@ struct WorkoutResultsView: View {
                 Spacer()
             }
             .navigationBarBackButtonHidden(true)
-//            .navigationBarTitle("Results")
             .padding()
-            .background(Color.white)
+            .background(Color(UIColor.systemBackground))
         }
     }
 }

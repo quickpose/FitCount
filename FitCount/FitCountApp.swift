@@ -8,6 +8,15 @@
 import SwiftUI
 import QuickPoseCore
 
+
+struct Exercise: Identifiable, Hashable {
+    let id = UUID()
+    let name: String
+    let details: String
+    let features: [QuickPose.Feature]
+    // Add more properties as needed
+}
+
 let exercises = [
     Exercise(
         name: "Biceps Curls",
@@ -22,13 +31,6 @@ let exercises = [
 
 ]
 
-struct Exercise: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let details: String
-    let features: [QuickPose.Feature]
-    // Add more properties as needed
-}
 
 @main
 struct FitCountApp: App {

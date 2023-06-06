@@ -39,12 +39,9 @@ func getCurrentVolume() -> Float {
 struct VolumeChangeView: View {
     @State private var soundLevel: Float = getCurrentVolume()
     
-    init() {
-    }
-    
     var body: some View {
         VStack {
-            Color.white
+                Color(UIColor.systemBackground)
                 .ignoresSafeArea()
                 .overlay(
                     VStack (spacing: 30){
