@@ -8,21 +8,43 @@
 import SwiftUI
 import QuickPoseCore
 import QuickPoseSwiftUI
+import AVFoundation
 
-struct VoiceCommands {
-    public static let standInsideBBox = "Stand so that your whole body is inside the bounding box"
+struct SessionData: Equatable {
+    let count: Int
+    let seconds: Int
 }
 
-class SessionData: ObservableObject {
-    @Published var count = 0
-    @Published var seconds = 0
-}
-
-enum WorkoutState {
-    case volume
+enum ViewState: Equatable {
+    case startVolume
     case instructions
-    case bbox
-    case exercise
+    case introBoundingBox
+    case boundingBox
+    case introExercise(Exercise)
+    case exercise(SessionData, enterTime: Date)
+    case results(SessionData)
+    
+    var speechPrompt: String? {
+        switch self {
+        case .introBoundingBox:
+            return "Stand so that your whole body is inside the bounding box"
+        case .introExercise(let exercise):
+            return "Now let's start the \(exercise.name) exercise"
+        case .exercise(let results, _):
+            return "\(results.count)"
+        default:
+            return nil
+        }
+    }
+
+    var features: [QuickPose.Feature]? {
+        switch self {
+        case .introBoundingBox, .boundingBox:
+            return [.inside(edgeInsets: QuickPose.RelativeCameraEdgeInsets(top: 0.1, left: 0.2, bottom: 0.01, right: 0.2))]
+            default:
+                return nil
+        }
+    }
 }
 
 struct QuickPoseBasicView: View {
@@ -31,48 +53,19 @@ struct QuickPoseBasicView: View {
     @EnvironmentObject var sessionConfig: SessionConfig
     
     @State private var overlayImage: UIImage?
-    
     @State private var feedbackText: String? = nil
     
-    @State var counter = QuickPoseThresholdCounter()
-    @State var measure: Double = 0
-    @State var count: Int = 0
-    @State var seconds: Int = 0
-    let exerciseTimer = TimerManager()
+    @State private var counter = QuickPoseThresholdCounter()
+    @State private var unchanged = QuickPoseDoubleUnchangedDetector(similarDuration: 2, leniency: 0)
+    @State private var state: ViewState = .startVolume
     
-    @State var isInBBox = false
-    @State var state = WorkoutState.volume
-    
-    @State private var indicatorWidth: CGFloat = 0.0
-    
-    @StateObject var sessionData = SessionData()
-    
-    @State var countScale = 1.0
-    
-    @State private var isActive: Bool = false
-    
-    let bboxTimer = TimerManager()
-    
-    func goToResults() {
-        DispatchQueue.main.async {
-            sessionData.seconds = Int(exerciseTimer.getTotalSeconds())
-            sessionData.count = Int(counter.getCount())
-            
-            isActive = true // Set the state variable to trigger the navigation
-        }
-    }
+    @State private var boundingBoxVisibility = 1.0
+    @State private var countScale = 1.0
+    @State private var boundingBoxMaskWidth = 0.0
     
     var body: some View {
-        VStack{
-            NavigationLink(value: "Workout results") {
-                EmptyView()
-            }.navigationDestination(isPresented: $isActive) {
-                WorkoutResultsView()
-                    .environmentObject(sessionData)
-                    .environmentObject(viewModel)
-            }
-            
-            GeometryReader { geometry in
+        GeometryReader { geometry in
+            VStack {
                 ZStack(alignment: .top) {
                     QuickPoseCameraView(useFrontCamera: true, delegate: quickPose)
                     QuickPoseOverlayView(overlayImage: $overlayImage)
@@ -80,68 +73,97 @@ struct QuickPoseBasicView: View {
                 .frame(width: geometry.safeAreaInsets.leading + geometry.size.width + geometry.safeAreaInsets.trailing)
                 .edgesIgnoringSafeArea(.all)
                 .overlay() {
-                    if (state == WorkoutState.volume) {
-                        VolumeChangeView().overlay(alignment: .bottom) {
-                            Button (action: {
-                                state = WorkoutState.instructions
-                                
-                            }) {
-                                Text("Continue").foregroundColor(.white)
-                                    .padding()
-                                    .background(.indigo) // Set background color to the main color
-                                    .cornerRadius(8) // Add corner radius for a rounded look
+                    switch state {
+                        case .startVolume:
+                            VolumeChangeView()
+                                .overlay(alignment: .bottom) {
+                                    Button (action: {
+                                        state = .instructions
+                                    }) {
+                                        Text("Continue").foregroundColor(.white)
+                                            .padding()
+                                            .background(Color("AccentColor"))
+                                            .cornerRadius(8)
+                                }
                             }
-                        }
-                    }
-                    
-                    if (state == WorkoutState.instructions) {
-                        InstructionsView().overlay(alignment: .bottom) {
-                            Button (action: {
-                                state = WorkoutState.bbox
-                                Text2Speech(text: VoiceCommands.standInsideBBox).say()
-                            }) {
-                                Text("Start Workout").foregroundColor(.white)
-                                    .padding()
-                                    .background(.indigo) // Set background color to the main color
-                                    .cornerRadius(8) // Add corner radius for a rounded look
+                        case .instructions:
+                            InstructionsView()
+                            .overlay(alignment: .bottom) {
+                                Button (action: {
+                                    state = .introBoundingBox
+                                }) {
+                                    Text("Start Workout").foregroundColor(.white)
+                                        .padding()
+                                        .background(Color("AccentColor"))
+                                        .cornerRadius(8)
                             }
+                            }
+                    case .introBoundingBox:
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(.red, lineWidth: 5)
                         }
-                    }
-                    
-                    if (state == WorkoutState.bbox) {
-                        BoundingBoxView(isInBBox: isInBBox, indicatorWidth: indicatorWidth)
+                        .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.8)
+                        .padding(.horizontal, (geometry.size.width * 1 - 0.6)/2)
+
+                    case .boundingBox:
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(boundingBoxVisibility == 1 ? .green : .red, lineWidth: 5)
+
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.green.opacity(0.5))
+                                .mask(alignment: .leading) {
+                                    Rectangle()
+                                        .frame(width: geometry.size.width * 0.6 * boundingBoxMaskWidth)
+                                }
+                        }
+                        .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.8)
+                        .padding(.horizontal, (geometry.size.width * 1 - 0.6)/2)
+
+                        case .results(let results):
+                            WorkoutResultsView(sessionData: results)
+                                .environmentObject(viewModel)
+
+                         default:
+                             EmptyView()
                     }
                 }
+
                 .overlay(alignment: .topTrailing) {
                     Button(action: {
-                        goToResults()
+                        if case .results = state {
+                            viewModel.popToRoot()
+                        } else {
+                            state = .results(SessionData(count: counter.state.count, seconds: 0))
+                        }
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 44))
-                            .foregroundColor(.indigo)
+                            .foregroundColor(Color("AccentColor"))
                     }
                     .padding()
                 }
-                
+
                 .overlay(alignment: .bottom) {
-                    if (state == WorkoutState.exercise) {
+                    if case .exercise(let results, let enterTime) = state {
                         HStack {
-                            Text(String(count) + (sessionConfig.useReps ? " \\ " + String(sessionConfig.nReps) : "") + " reps")
+                            Text(String(results.count) + (sessionConfig.useReps ? " \\ " + String(sessionConfig.nReps) : "") + " reps")
                                 .font(.system(size: 30, weight: .semibold))
                                 .padding(16)
                                 .scaleEffect(countScale)
-                            
-                            Text(String(seconds) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds + sessionConfig.nMinutes * 60) : "") + " sec")
+
+                            Text(String(format: "%.0f",-enterTime.timeIntervalSinceNow) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds + sessionConfig.nMinutes * 60) : "") + " sec")
                                 .font(.system(size: 30, weight: .semibold))
                                 .padding(16)
                         }
                         .frame(maxWidth: .infinity)
                         .foregroundColor(.white)
-                        .background(.indigo)
+                        .background(Color("AccentColor"))
                     }
                 }
                 .overlay(alignment: .center) {
-                    if (state == WorkoutState.exercise) {
+                    if case .exercise = state {
                         if let feedbackText = feedbackText {
                             Text(feedbackText)
                                 .font(.system(size: 26, weight: .semibold)).foregroundColor(.white)
@@ -149,108 +171,110 @@ struct QuickPoseBasicView: View {
                         }
                     }
                 }
-                .onAppear {
-                    quickPose.start(features: sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
-                        
-                        
-                        
-                        let width = geometry.size.width * 0.6
-                        let height = geometry.size.height * 0.8
-                        let x0 = geometry.size.width / 2
-                        let y0 = geometry.size.height / 2
-                        
-                        // all xs in [x0 - (width/2), x0 + (width/2)]
-                        // all ys in [y0 - (height/2), y0 + (height/2)]
-                        
-                        let scaleToView = CGAffineTransform(scaleX: geometry.size.width, y:geometry.size.height)
-                        
-                        if (state == WorkoutState.bbox && landmarks != nil) {
-                            let scaledLandmarks = landmarks!.poseLandmarks.map {
-                                let point = CGPoint(x: $0[0], y: $0[1]).applying(scaleToView)
-                                return [point.x, point.y, $0[2]]
-                            }
-                            
-                            let xsInBox = scaledLandmarks.allSatisfy { x0 - (width/2) < $0[0] && $0[0] < x0 + (width/2) }
-                            let ysInBox = scaledLandmarks.allSatisfy { y0 - (height/2) < $0[1] && $0[1] < y0 + (height/2) }
-                            
-                            isInBBox = xsInBox && ysInBox
-                        }
-                        
-                        if (!isInBBox && bboxTimer.isRunning()) {
-                            bboxTimer.pause()
-                            bboxTimer.reset()
-                            indicatorWidth = 0
-                        }
-                        
-                        if (isInBBox && !bboxTimer.isRunning()) {
-                            bboxTimer.start()
-                        }
-                        
-                        if (bboxTimer.isRunning()) {
-                            indicatorWidth = bboxTimer.getTotalSeconds() / 2
-                        }
-                        
-                        if (bboxTimer.isRunning() && bboxTimer.getTotalSeconds() > 2) {
-                            bboxTimer.pause()
-                            bboxTimer.reset()
-                            
-                            state = WorkoutState.exercise
-                        }
-                        
-                        if (state == WorkoutState.exercise && !exerciseTimer.isRunning()) {
-                            Text2Speech(text: "Now let's start the \(sessionConfig.exercise.name) exercise").say()
-                            exerciseTimer.start()
-                        }
-                        
-                        if (state == WorkoutState.exercise) {
-                            seconds = Int(exerciseTimer.getTotalSeconds())
-                            
-                            if let feedback = feedback[.fitness(.bicepsCurls)] {
-                                feedbackText = feedback.displayString
-                            } else {
-                                feedbackText = nil
-                            }
-                            
-                            if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!]{
-                                counter.count(probability: result.value)
-                                if (counter.getCount() > count) {
-                                    Text2Speech(text: String(counter.getCount())).say()
-                                    withAnimation(.easeInOut(duration: 0.1)) {
-                                        countScale = 2.0
-                                    }
-                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            countScale = 1.0
+               
+                .onChange(of: state) { _ in
+
+                    if let speechPrompt = state.speechPrompt {
+                        let utterance = AVSpeechUtterance(string: speechPrompt)
+                        AVSpeechSynthesizer().speak(utterance)
+                    }
+
+                    if case .results(let result) = state {
+                        let sessionDataDump = SessionDataModel(exercise: sessionConfig.exercise.name, count: result.count, seconds: result.seconds, date: Date())
+                        appendToJson(sessionData: sessionDataDump)
+                    }
+                    
+                    quickPose.update(features: state.features ?? sessionConfig.exercise.features)
+                }
+                .onAppear() {
+                    UIApplication.shared.isIdleTimerDisabled = true
+                    quickPose.start(features: state.features ?? sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
+                        overlayImage = image
+                        if case .success(_,_) = status {
+
+                            switch state {
+                            case .introBoundingBox:
+                                
+                                if let result = features.first?.value, result.value == 1.0 {
+                                    unchanged.reset()
+                                    state = .boundingBox
+                                }
+                            case .boundingBox:
+                                if let dictionaryEntry = features.first  {
+                                    let result = dictionaryEntry.value
+                                    boundingBoxVisibility = result.value
+                                    unchanged.count(result: result.value) {
+                                        if result.value == 1 { // been in for 2 seconds
+                                            boundingBoxMaskWidth = 0
+                                            withAnimation(.easeInOut(duration: 1)) {
+                                                boundingBoxMaskWidth = 1.0
+                                            }
+                                            DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                                                state = .introExercise(sessionConfig.exercise)
+                                            }
+                                        } else {
+                                            state = .introBoundingBox
                                         }
                                     }
                                 }
-                                count = counter.getCount()
-                                
-                                if (sessionConfig.useReps && count >= sessionConfig.nReps || !sessionConfig.useReps && Int(exerciseTimer.getTotalSeconds()) >= (sessionConfig.nSeconds + sessionConfig.nMinutes * 60)) {
-                                    goToResults()
+
+                            case .introExercise(_):
+                                DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                                    state = .exercise(SessionData(count: 0, seconds: 0), enterTime: Date())
                                 }
-                                measure = result.value
+                            case .exercise(_, let enterDate):
+                                let secondsElapsed = Int(-enterDate.timeIntervalSinceNow)
+
+                                if let feedback = feedback[.fitness(.bicepCurls)] {
+                                    feedbackText = feedback.displayString
+                                } else {
+                                    feedbackText = nil
+
+                                    if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!] {
+                                        _ = counter.count(result.value) { newState in
+                                            if !newState.isEntered {
+                                                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                                                    withAnimation(.easeInOut(duration: 0.1)) {
+                                                        countScale = 2.0
+                                                    }
+                                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
+                                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                                            countScale = 1.0
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                let newResults = SessionData(count: counter.state.count, seconds: secondsElapsed)
+                                state = .exercise(newResults, enterTime: enterDate) // refresh view for every updated second
+                                var hasFinished = false
+                                if sessionConfig.useReps {
+                                    hasFinished = counter.state.count >= sessionConfig.nReps
+                                } else {
+                                    hasFinished = secondsElapsed >= sessionConfig.nSeconds + sessionConfig.nMinutes * 60
+                                }
+
+                                if hasFinished {
+                                    state = .results(newResults)
+                                }
+                            default:
+                                break
                             }
-                        }
-                        if case .success(_,_) = status {
-                            overlayImage = image
-                        } else {
-                            overlayImage = nil
+                        } else if state != .startVolume && state != .instructions{
+                            state = .introBoundingBox
                         }
                     })
-                }.onAppear() {
-                    UIApplication.shared.isIdleTimerDisabled = true
                 }
                 .onDisappear {
-                    let sessionDataDump = SessionDataModel(exercise: sessionConfig.exercise.name, count: Int(counter.getCount()), seconds: Int(exerciseTimer.getTotalSeconds()), date: Date())
-                    appendToJson(sessionData: sessionDataDump)
-                    
                     quickPose.stop()
                     UIApplication.shared.isIdleTimerDisabled = false
                 }
             }
-        }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        }
     }
 }

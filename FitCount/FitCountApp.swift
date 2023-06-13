@@ -19,9 +19,9 @@ struct Exercise: Identifiable, Hashable {
 
 let exercises = [
     Exercise(
-        name: "Biceps Curls",
+        name: "Bicep Curls",
         details: "Lift weights in both hands by bending your elbow and lifting them towards your shoulder.",
-        features: [.fitness(.bicepsCurls), .overlay(.upperBody)]
+        features: [.fitness(.bicepCurls), .overlay(.upperBody)]
     ),
     Exercise(
         name: "Squats",
