@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "92CACFCC2A1B7DD100DA2B40"
-               BuildableName = "FitCounter.app"
-               BlueprintName = "FitCounter"
-               ReferencedContainer = "container:FitCounter by QuickPose.ai.xcodeproj">
+               BuildableName = "FitCount.app"
+               BlueprintName = "FitCount"
+               ReferencedContainer = "container:FitCount.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "92CACFCC2A1B7DD100DA2B40"
-            BuildableName = "FitCounter.app"
-            BlueprintName = "FitCounter"
-            ReferencedContainer = "container:FitCounter by QuickPose.ai.xcodeproj">
+            BuildableName = "FitCount.app"
+            BlueprintName = "FitCount"
+            ReferencedContainer = "container:FitCount.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "92CACFCC2A1B7DD100DA2B40"
-            BuildableName = "FitCounter.app"
-            BlueprintName = "FitCounter"
-            ReferencedContainer = "container:FitCounter by QuickPose.ai.xcodeproj">
+            BuildableName = "FitCount.app"
+            BlueprintName = "FitCount"
+            ReferencedContainer = "container:FitCount.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

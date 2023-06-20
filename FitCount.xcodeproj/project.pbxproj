@@ -43,7 +43,7 @@
 		925DB1D52A40B35800CCA87E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		927261A32A24EF0B00C3B390 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		92C702F82A1BC705002ECC0B /* QuickPoseBasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPoseBasicView.swift; sourceTree = "<group>"; };
-		92CACFCD2A1B7DD100DA2B40 /* FitCounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92CACFCD2A1B7DD100DA2B40 /* FitCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92CACFD02A1B7DD100DA2B40 /* FitCountApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitCountApp.swift; sourceTree = "<group>"; };
 		92CACFD22A1B7DD100DA2B40 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		92CACFD42A1B7DD100DA2B40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -116,7 +116,7 @@
 		92CACFCE2A1B7DD100DA2B40 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				92CACFCD2A1B7DD100DA2B40 /* FitCounter.app */,
+				92CACFCD2A1B7DD100DA2B40 /* FitCount.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -155,9 +155,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		92CACFCC2A1B7DD100DA2B40 /* FitCounter */ = {
+		92CACFCC2A1B7DD100DA2B40 /* FitCount */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCounter" */;
+			buildConfigurationList = 92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCount" */;
 			buildPhases = (
 				92CACFC92A1B7DD100DA2B40 /* Sources */,
 				92CACFCA2A1B7DD100DA2B40 /* Frameworks */,
@@ -167,7 +167,7 @@
 			);
 			dependencies = (
 			);
-			name = FitCounter;
+			name = FitCount;
 			packageProductDependencies = (
 				920A3EF52A20B14100EC6FC9 /* PagerTabStripView */,
 				D06C7CD72A373D18001B4508 /* QuickPoseCamera */,
@@ -180,7 +180,7 @@
 				927BFE692A4095F500C001AC /* QuickPoseSwiftUI */,
 			);
 			productName = FitCount;
-			productReference = 92CACFCD2A1B7DD100DA2B40 /* FitCounter.app */;
+			productReference = 92CACFCD2A1B7DD100DA2B40 /* FitCount.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -198,7 +198,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCounter by QuickPose.ai" */;
+			buildConfigurationList = 92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCount" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -215,7 +215,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				92CACFCC2A1B7DD100DA2B40 /* FitCounter */,
+				92CACFCC2A1B7DD100DA2B40 /* FitCount */,
 			);
 		};
 /* End PBXProject section */
@@ -441,7 +441,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCounter by QuickPose.ai" */ = {
+		92CACFC82A1B7DD000DA2B40 /* Build configuration list for PBXProject "FitCount" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				92CACFEF2A1B7DD200DA2B40 /* Debug */,
@@ -450,7 +450,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCounter" */ = {
+		92CACFF12A1B7DD200DA2B40 /* Build configuration list for PBXNativeTarget "FitCount" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				92CACFF22A1B7DD200DA2B40 /* Debug */,
