@@ -30,25 +30,23 @@ enum ViewState: Equatable {
             return "Stand so that your whole body is inside the bounding box"
         case .introExercise(let exercise):
             return "Now let's start the \(exercise.name) exercise"
-        case .exercise(let results, _):
-            return "\(results.count)"
         default:
             return nil
         }
     }
-
+    
     var features: [QuickPose.Feature]? {
         switch self {
         case .introBoundingBox, .boundingBox:
-            return [.inside(edgeInsets: QuickPose.RelativeCameraEdgeInsets(top: 0.1, left: 0.2, bottom: 0.01, right: 0.2))]
-            default:
-                return nil
+            return [.inside(QuickPose.RelativeCameraEdgeInsets(top: 0.1, left: 0.2, bottom: 0.01, right: 0.2))]
+        default:
+            return nil
         }
     }
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "01H122Z3J6NY33V548V2D55K3J") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "YOUR SDK KEY") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
@@ -63,6 +61,8 @@ struct QuickPoseBasicView: View {
     @State private var countScale = 1.0
     @State private var boundingBoxMaskWidth = 0.0
     
+    static let synthesizer = AVSpeechSynthesizer()
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -74,62 +74,41 @@ struct QuickPoseBasicView: View {
                 .edgesIgnoringSafeArea(.all)
                 .overlay() {
                     switch state {
-                        case .startVolume:
-                            VolumeChangeView()
-                                .overlay(alignment: .bottom) {
-                                    Button (action: {
-                                        state = .instructions
-                                    }) {
-                                        Text("Continue").foregroundColor(.white)
-                                            .padding()
-                                            .background(Color("AccentColor"))
-                                            .cornerRadius(8)
+                    case .startVolume:
+                        VolumeChangeView()
+                            .overlay(alignment: .bottom) {
+                                Button (action: {
+                                    state = .instructions
+                                }) {
+                                    Text("Continue").foregroundColor(.white)
+                                        .padding()
+                                        .background(Color("AccentColor"))
+                                        .cornerRadius(8)
                                 }
                             }
-                        case .instructions:
-                            InstructionsView()
+                    case .instructions:
+                        InstructionsView()
                             .overlay(alignment: .bottom) {
                                 Button (action: {
                                     state = .introBoundingBox
+                                    Text2Speech(text: state.speechPrompt!).say()
                                 }) {
                                     Text("Start Workout").foregroundColor(.white)
                                         .padding()
                                         .background(Color("AccentColor"))
                                         .cornerRadius(8)
-                            }
-                            }
-                    case .introBoundingBox:
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(.red, lineWidth: 5)
-                        }
-                        .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.8)
-                        .padding(.horizontal, (geometry.size.width * 1 - 0.6)/2)
-
-                    case .boundingBox:
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(boundingBoxVisibility == 1 ? .green : .red, lineWidth: 5)
-
-                            RoundedRectangle(cornerRadius: 15)
-                                .fill(.green.opacity(0.5))
-                                .mask(alignment: .leading) {
-                                    Rectangle()
-                                        .frame(width: geometry.size.width * 0.6 * boundingBoxMaskWidth)
                                 }
-                        }
-                        .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.8)
-                        .padding(.horizontal, (geometry.size.width * 1 - 0.6)/2)
-
-                        case .results(let results):
-                            WorkoutResultsView(sessionData: results)
-                                .environmentObject(viewModel)
-
-                         default:
-                             EmptyView()
+                            }
+                        
+                    case .results(let results):
+                        WorkoutResultsView(sessionData: results)
+                            .environmentObject(viewModel)
+                        
+                    default:
+                        EmptyView()
                     }
                 }
-
+                
                 .overlay(alignment: .topTrailing) {
                     Button(action: {
                         if case .results = state {
@@ -144,7 +123,7 @@ struct QuickPoseBasicView: View {
                     }
                     .padding()
                 }
-
+                
                 .overlay(alignment: .bottom) {
                     if case .exercise(let results, let enterTime) = state {
                         HStack {
@@ -152,7 +131,7 @@ struct QuickPoseBasicView: View {
                                 .font(.system(size: 30, weight: .semibold))
                                 .padding(16)
                                 .scaleEffect(countScale)
-
+                            
                             Text(String(format: "%.0f",-enterTime.timeIntervalSinceNow) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds + sessionConfig.nMinutes * 60) : "") + " sec")
                                 .font(.system(size: 30, weight: .semibold))
                                 .padding(16)
@@ -171,14 +150,8 @@ struct QuickPoseBasicView: View {
                         }
                     }
                 }
-               
+                
                 .onChange(of: state) { _ in
-
-                    if let speechPrompt = state.speechPrompt {
-                        let utterance = AVSpeechUtterance(string: speechPrompt)
-                        AVSpeechSynthesizer().speak(utterance)
-                    }
-
                     if case .results(let result) = state {
                         let sessionDataDump = SessionDataModel(exercise: sessionConfig.exercise.name, count: result.count, seconds: result.seconds, date: Date())
                         appendToJson(sessionData: sessionDataDump)
@@ -191,7 +164,7 @@ struct QuickPoseBasicView: View {
                     quickPose.start(features: state.features ?? sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
                         overlayImage = image
                         if case .success(_,_) = status {
-
+                            
                             switch state {
                             case .introBoundingBox:
                                 
@@ -211,28 +184,30 @@ struct QuickPoseBasicView: View {
                                             }
                                             DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                                                 state = .introExercise(sessionConfig.exercise)
+                                                Text2Speech(text: state.speechPrompt!).say()
                                             }
                                         } else {
                                             state = .introBoundingBox
                                         }
                                     }
                                 }
-
+                                
                             case .introExercise(_):
                                 DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
                                     state = .exercise(SessionData(count: 0, seconds: 0), enterTime: Date())
                                 }
                             case .exercise(_, let enterDate):
                                 let secondsElapsed = Int(-enterDate.timeIntervalSinceNow)
-
+                                
                                 if let feedback = feedback[.fitness(.bicepCurls)] {
                                     feedbackText = feedback.displayString
                                 } else {
                                     feedbackText = nil
-
+                                    
                                     if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!] {
                                         _ = counter.count(result.value) { newState in
                                             if !newState.isEntered {
+                                                Text2Speech(text: "\(counter.state.count)").say()
                                                 DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
                                                     withAnimation(.easeInOut(duration: 0.1)) {
                                                         countScale = 2.0
@@ -247,7 +222,7 @@ struct QuickPoseBasicView: View {
                                         }
                                     }
                                 }
-
+                                
                                 let newResults = SessionData(count: counter.state.count, seconds: secondsElapsed)
                                 state = .exercise(newResults, enterTime: enterDate) // refresh view for every updated second
                                 var hasFinished = false
@@ -256,9 +231,10 @@ struct QuickPoseBasicView: View {
                                 } else {
                                     hasFinished = secondsElapsed >= sessionConfig.nSeconds + sessionConfig.nMinutes * 60
                                 }
-
+                                
                                 if hasFinished {
                                     state = .results(newResults)
+                                    quickPose.stop()
                                 }
                             default:
                                 break
@@ -269,12 +245,11 @@ struct QuickPoseBasicView: View {
                     })
                 }
                 .onDisappear {
-                    quickPose.stop()
                     UIApplication.shared.isIdleTimerDisabled = false
                 }
             }
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
+            .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden, for: .tabBar)
         }
     }
 }
