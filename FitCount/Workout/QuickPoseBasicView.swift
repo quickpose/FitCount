@@ -19,7 +19,7 @@ enum ViewState: Equatable {
     case startVolume
     case instructions
     case introBoundingBox
-    case boundingBox
+    case boundingBox(enterTime: Date)
     case introExercise(Exercise)
     case exercise(SessionData, enterTime: Date)
     case results(SessionData)
@@ -30,15 +30,6 @@ enum ViewState: Equatable {
             return "Stand so that your whole body is inside the bounding box"
         case .introExercise(let exercise):
             return "Now let's start the \(exercise.name) exercise"
-        default:
-            return nil
-        }
-    }
-    
-    var features: [QuickPose.Feature]? {
-        switch self {
-        case .introBoundingBox, .boundingBox:
-            return [.inside(QuickPose.RelativeCameraEdgeInsets(top: 0.1, left: 0.2, bottom: 0.01, right: 0.2))]
         default:
             return nil
         }
@@ -54,7 +45,6 @@ struct QuickPoseBasicView: View {
     @State private var feedbackText: String? = nil
     
     @State private var counter = QuickPoseThresholdCounter()
-    @State private var unchanged = QuickPoseDoubleUnchangedDetector(similarDuration: 2, leniency: 0)
     @State private var state: ViewState = .startVolume
     
     @State private var boundingBoxVisibility = 1.0
@@ -62,6 +52,13 @@ struct QuickPoseBasicView: View {
     @State private var boundingBoxMaskWidth = 0.0
     
     static let synthesizer = AVSpeechSynthesizer()
+    
+    func canMoveFromBoundingBox(landmarks: QuickPose.Landmarks) -> Bool {
+        let xsInBox = landmarks.allLandmarksForBody().allSatisfy { 0.5 - (0.8/2) < $0.x && $0.x < 0.5 + (0.8/2) }
+        let ysInBox = landmarks.allLandmarksForBody().allSatisfy { 0.5 - (0.9/2) < $0.y && $0.y < 0.5 + (0.9/2) }
+        
+        return xsInBox && ysInBox
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -99,6 +96,29 @@ struct QuickPoseBasicView: View {
                                         .cornerRadius(8)
                                 }
                             }
+                    case .introBoundingBox:
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(.red, lineWidth: 5)
+                        }
+                        .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.9)
+                        .padding(.horizontal, (geometry.size.width * 1 - 0.8)/2)
+                        
+                    case .boundingBox:
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(.green, lineWidth: 5)
+                            
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.green.opacity(0.5))
+                                .mask(alignment: .leading) {
+                                    Rectangle()
+                                        .frame(width: geometry.size.width * 0.9 * boundingBoxMaskWidth)
+                                }
+                        }
+                        .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.9)
+                        .padding(.horizontal, (geometry.size.width * 1 - 0.8)/2)
+                        
                         
                     case .results(let results):
                         WorkoutResultsView(sessionData: results)
@@ -115,6 +135,7 @@ struct QuickPoseBasicView: View {
                             viewModel.popToRoot()
                         } else {
                             state = .results(SessionData(count: counter.state.count, seconds: 0))
+                            quickPose.stop()
                         }
                     }) {
                         Image(systemName: "xmark.circle.fill")
@@ -157,41 +178,31 @@ struct QuickPoseBasicView: View {
                         appendToJson(sessionData: sessionDataDump)
                     }
                     
-                    quickPose.update(features: state.features ?? sessionConfig.exercise.features)
+                    quickPose.update(features: sessionConfig.exercise.features)
                 }
                 .onAppear() {
                     UIApplication.shared.isIdleTimerDisabled = true
-                    quickPose.start(features: state.features ?? sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
+                    quickPose.start(features: sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
                         overlayImage = image
                         if case .success(_,_) = status {
                             
                             switch state {
                             case .introBoundingBox:
                                 
-                                if let result = features.first?.value, result.value == 1.0 {
-                                    unchanged.reset()
-                                    state = .boundingBox
+                                if let landmarks = landmarks, canMoveFromBoundingBox(landmarks: landmarks) {
+                                    state = .boundingBox(enterTime: Date())
+                                    boundingBoxMaskWidth = 0
                                 }
-                            case .boundingBox:
-                                if let dictionaryEntry = features.first  {
-                                    let result = dictionaryEntry.value
-                                    boundingBoxVisibility = result.value
-                                    unchanged.count(result: result.value) {
-                                        if result.value == 1 { // been in for 2 seconds
-                                            boundingBoxMaskWidth = 0
-                                            withAnimation(.easeInOut(duration: 1)) {
-                                                boundingBoxMaskWidth = 1.0
-                                            }
-                                            DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                                                state = .introExercise(sessionConfig.exercise)
-                                                Text2Speech(text: state.speechPrompt!).say()
-                                            }
-                                        } else {
-                                            state = .introBoundingBox
-                                        }
+                            case .boundingBox(let enterDate):
+                                if let landmarks = landmarks, canMoveFromBoundingBox(landmarks: landmarks) {
+                                    let timeSinceInsideBBox = -enterDate.timeIntervalSinceNow
+                                    boundingBoxMaskWidth = timeSinceInsideBBox / 2
+                                    if timeSinceInsideBBox > 2 {
+                                        state = .introExercise(sessionConfig.exercise)
                                     }
+                                } else {
+                                    state = .introBoundingBox
                                 }
-                                
                             case .introExercise(_):
                                 DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
                                     state = .exercise(SessionData(count: 0, seconds: 0), enterTime: Date())
@@ -199,7 +210,7 @@ struct QuickPoseBasicView: View {
                             case .exercise(_, let enterDate):
                                 let secondsElapsed = Int(-enterDate.timeIntervalSinceNow)
                                 
-                                if let feedback = feedback[.fitness(.bicepCurls)] {
+                                if let feedback = feedback[sessionConfig.exercise.features.first!] {
                                     feedbackText = feedback.displayString
                                 } else {
                                     feedbackText = nil
