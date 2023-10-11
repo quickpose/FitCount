@@ -379,7 +379,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.FitCount;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -413,7 +413,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.FitCount;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

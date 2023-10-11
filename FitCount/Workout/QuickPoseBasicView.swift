@@ -37,7 +37,7 @@ enum ViewState: Equatable {
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "YOUR SDK KEY") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "YOUR SDK KEY HERE") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
@@ -182,78 +182,80 @@ struct QuickPoseBasicView: View {
                 }
                 .onAppear() {
                     UIApplication.shared.isIdleTimerDisabled = true
-                    quickPose.start(features: sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
-                        overlayImage = image
-                        if case .success(_,_) = status {
-                            
-                            switch state {
-                            case .introBoundingBox:
+                    DispatchQueue.main.asyncAfter(deadline: .now()+1.0){
+                        quickPose.start(features: sessionConfig.exercise.features, onFrame: { status, image, features, feedback, landmarks in
+                            overlayImage = image
+                            if case .success = status {
                                 
-                                if let landmarks = landmarks, canMoveFromBoundingBox(landmarks: landmarks) {
-                                    state = .boundingBox(enterTime: Date())
-                                    boundingBoxMaskWidth = 0
-                                }
-                            case .boundingBox(let enterDate):
-                                if let landmarks = landmarks, canMoveFromBoundingBox(landmarks: landmarks) {
-                                    let timeSinceInsideBBox = -enterDate.timeIntervalSinceNow
-                                    boundingBoxMaskWidth = timeSinceInsideBBox / 2
-                                    if timeSinceInsideBBox > 2 {
-                                        state = .introExercise(sessionConfig.exercise)
-                                    }
-                                } else {
-                                    state = .introBoundingBox
-                                }
-                            case .introExercise(_):
-                                DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                                    state = .exercise(SessionData(count: 0, seconds: 0), enterTime: Date())
-                                }
-                            case .exercise(_, let enterDate):
-                                let secondsElapsed = Int(-enterDate.timeIntervalSinceNow)
-                                
-                                if let feedback = feedback[sessionConfig.exercise.features.first!] {
-                                    feedbackText = feedback.displayString
-                                } else {
-                                    feedbackText = nil
+                                switch state {
+                                case .introBoundingBox:
                                     
-                                    if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!] {
-                                        _ = counter.count(result.value) { newState in
-                                            if !newState.isEntered {
-                                                Text2Speech(text: "\(counter.state.count)").say()
-                                                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
-                                                    withAnimation(.easeInOut(duration: 0.1)) {
-                                                        countScale = 2.0
-                                                    }
-                                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            countScale = 1.0
+                                    if let landmarks = landmarks, canMoveFromBoundingBox(landmarks: landmarks) {
+                                        state = .boundingBox(enterTime: Date())
+                                        boundingBoxMaskWidth = 0
+                                    }
+                                case .boundingBox(let enterDate):
+                                    if let landmarks = landmarks, canMoveFromBoundingBox(landmarks: landmarks) {
+                                        let timeSinceInsideBBox = -enterDate.timeIntervalSinceNow
+                                        boundingBoxMaskWidth = timeSinceInsideBBox / 2
+                                        if timeSinceInsideBBox > 2 {
+                                            state = .introExercise(sessionConfig.exercise)
+                                        }
+                                    } else {
+                                        state = .introBoundingBox
+                                    }
+                                case .introExercise(_):
+                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                                        state = .exercise(SessionData(count: 0, seconds: 0), enterTime: Date())
+                                    }
+                                case .exercise(_, let enterDate):
+                                    let secondsElapsed = Int(-enterDate.timeIntervalSinceNow)
+                                    
+                                    if let feedback = feedback[sessionConfig.exercise.features.first!] {
+                                        feedbackText = feedback.displayString
+                                    } else {
+                                        feedbackText = nil
+                                        
+                                        if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!] {
+                                            _ = counter.count(result.value) { newState in
+                                                if !newState.isEntered {
+                                                    Text2Speech(text: "\(counter.state.count)").say()
+                                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                                                        withAnimation(.easeInOut(duration: 0.1)) {
+                                                            countScale = 2.0
+                                                        }
+                                                        DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
+                                                            withAnimation(.easeInOut(duration: 0.2)) {
+                                                                countScale = 1.0
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
                                     }
+                                    
+                                    let newResults = SessionData(count: counter.state.count, seconds: secondsElapsed)
+                                    state = .exercise(newResults, enterTime: enterDate) // refresh view for every updated second
+                                    var hasFinished = false
+                                    if sessionConfig.useReps {
+                                        hasFinished = counter.state.count >= sessionConfig.nReps
+                                    } else {
+                                        hasFinished = secondsElapsed >= sessionConfig.nSeconds + sessionConfig.nMinutes * 60
+                                    }
+                                    
+                                    if hasFinished {
+                                        state = .results(newResults)
+                                        quickPose.stop()
+                                    }
+                                default:
+                                    break
                                 }
-                                
-                                let newResults = SessionData(count: counter.state.count, seconds: secondsElapsed)
-                                state = .exercise(newResults, enterTime: enterDate) // refresh view for every updated second
-                                var hasFinished = false
-                                if sessionConfig.useReps {
-                                    hasFinished = counter.state.count >= sessionConfig.nReps
-                                } else {
-                                    hasFinished = secondsElapsed >= sessionConfig.nSeconds + sessionConfig.nMinutes * 60
-                                }
-                                
-                                if hasFinished {
-                                    state = .results(newResults)
-                                    quickPose.stop()
-                                }
-                            default:
-                                break
+                            } else if state != .startVolume && state != .instructions{
+                                state = .introBoundingBox
                             }
-                        } else if state != .startVolume && state != .instructions{
-                            state = .introBoundingBox
-                        }
-                    })
+                        })
+                    }
                 }
                 .onDisappear {
                     UIApplication.shared.isIdleTimerDisabled = false
