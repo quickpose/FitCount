@@ -37,7 +37,7 @@ enum ViewState: Equatable {
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "01HNBD5JEKHV5X6FH2RF0X5S4N") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "PLACE YOUR SDK KEY HERE") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
