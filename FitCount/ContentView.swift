@@ -23,25 +23,19 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             TabView{
-                NavigationView {
-                    VStack {
-                        List(exercises) { exercise in
-                            NavigationLink(value: exercise) {
-                                VStack(alignment: .leading) {
-                                    Text(exercise.name)
-                                        .font(.headline)
-                                }
-                                .padding()
-                                .cornerRadius(8)
-                            }.navigationDestination(for: Exercise.self) { exercise in
-                                ExerciseDetailsView(exercise: exercise)
-                                    .environmentObject(viewModel)
-                                    .environmentObject(sessionConfig)
+                VStack {
+                    List(exercises) { exercise in
+                        NavigationLink(value: exercise) {
+                            VStack(alignment: .leading) {
+                                Text(exercise.name)
+                                    .font(.headline)
                             }
+                            .padding()
+                            .cornerRadius(8)
                         }
-                        .background(.white)
-                    }.navigationBarTitle(Text("Workouts"))
-                }
+                    }
+                    .background(.white)
+                }.navigationBarTitle(Text("Workouts"))
                 .tabItem{
                     Label("Exercises", systemImage: "figure.strengthtraining.functional")
                 }
@@ -52,6 +46,16 @@ struct ContentView: View {
                 
                 AboutView().tabItem{
                     Label("About", systemImage: "info.square")
+                }
+            }
+            .navigationDestination(for: Exercise.self) { exercise in
+                ExerciseDetailsView(exercise: exercise)
+                    .environmentObject(viewModel)
+                    .environmentObject(sessionConfig)
+            }
+            .navigationDestination(for: String.self) { value in
+                if value == "Workout" {
+                    WorkoutView().environmentObject(viewModel).environmentObject(sessionConfig)
                 }
             }
         }

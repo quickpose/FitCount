@@ -119,9 +119,6 @@ struct ExerciseDetailsView: View {
                     .cornerRadius(8)
                 
             }
-            .navigationDestination(for: String.self) { _ in
-                WorkoutView().environmentObject(viewModel).environmentObject(sessionConfig)
-            }
             
             
         }
