@@ -1,4 +1,5 @@
 {
+  "originHash" : "a6348f1bf505e20b97d22c86bf9a17a4f4f12da47c6c23c5085928bd0b4ceb61",
   "pins" : [
     {
       "identity" : "pagertabstripview",
@@ -14,10 +15,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/quickpose/quickpose-ios-sdk",
       "state" : {
-        "revision" : "0ffde8c71a78c2538e01a39ae938ea515a08b022",
-        "version" : "1.2.4"
+        "revision" : "2ae2da3520790b049cb98f4b67de57d5a3bf4c03",
+        "version" : "1.2.10"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
