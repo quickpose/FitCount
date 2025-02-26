@@ -37,7 +37,7 @@ enum ViewState: Equatable {
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "YOUR SDK KEY") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "01HNBD5JEKHV5X6FH2RF0X5S4N") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
@@ -174,11 +174,20 @@ struct QuickPoseBasicView: View {
                 
                 .onChange(of: state) { _ in
                     if case .results(let result) = state {
-                        let sessionDataDump = SessionDataModel(exercise: sessionConfig.exercise.name, count: result.count, seconds: result.seconds, date: Date())
-                        appendToJson(sessionData: sessionDataDump)
+                        do {
+                            let sessionDataDump = SessionDataModel(exercise: sessionConfig.exercise.name, count: result.count, seconds: result.seconds, date: Date())
+                            appendToJson(sessionData: sessionDataDump)
+                        } catch {
+                            print("Error saving session data: \(error.localizedDescription)")
+                        }
+                    } else {
+                        // Only update features if we're not in the results state
+                        do {
+                            quickPose.update(features: sessionConfig.exercise.features)
+                        } catch {
+                            print("Error updating QuickPose features: \(error.localizedDescription)")
+                        }
                     }
-                    
-                    quickPose.update(features: sessionConfig.exercise.features)
                 }
                 .onAppear() {
                     UIApplication.shared.isIdleTimerDisabled = true
@@ -245,8 +254,23 @@ struct QuickPoseBasicView: View {
                                     }
                                     
                                     if hasFinished {
-                                        state = .results(newResults)
-                                        quickPose.stop()
+                                        // Create a new SessionData object to avoid any potential reference issues
+                                        let finalResults = SessionData(count: newResults.count, seconds: newResults.seconds)
+                                        
+                                        // First change the state, then stop QuickPose
+                                        DispatchQueue.main.async {
+                                            state = .results(finalResults)
+                                            
+                                            // Add a small delay before stopping QuickPose to ensure the state change is processed
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                // Safely stop QuickPose
+                                                do {
+                                                    quickPose.stop()
+                                                } catch {
+                                                    print("Error stopping QuickPose: \(error.localizedDescription)")
+                                                }
+                                            }
+                                        }
                                     }
                                 default:
                                     break
@@ -259,6 +283,15 @@ struct QuickPoseBasicView: View {
                 }
                 .onDisappear {
                     UIApplication.shared.isIdleTimerDisabled = false
+                    
+                    // Safely stop QuickPose when view disappears
+                    DispatchQueue.main.async {
+                        do {
+                            quickPose.stop()
+                        } catch {
+                            print("Error stopping QuickPose on disappear: \(error.localizedDescription)")
+                        }
+                    }
                 }
             }
             .navigationBarBackButtonHidden(true)
