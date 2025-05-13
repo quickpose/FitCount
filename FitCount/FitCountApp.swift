@@ -28,7 +28,11 @@ let exercises = [
         details: "Bend your knees and lower your body.",
         features: [.fitness(.squats), .overlay(.wholeBody)]
     ),
-
+    Exercise(
+        name: "Overhead Dumbbell Press",
+        details: "Stand with feet shoulder-width apart, hold dumbbells at shoulder height, and press them overhead until arms are fully extended.",
+        features: [.fitness(.overheadDumbbellPress), .overlay(.upperBody)]
+    ),
 ]
 
 
