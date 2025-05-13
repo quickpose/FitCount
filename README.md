@@ -2,8 +2,6 @@
 
 This project provides the end-to-end demo solution for an AR/AI fitness iOS app. FitCount is based on the [QuickPose.ai](https://QuickPose.ai) SDK.
 
-Try the **TestFlight version of the FitCount app**: https://testflight.apple.com/join/4fDEDysS.
-
 For more explanation of the code in this repository please check our [FitCount Guide](https://docs.quickpose.ai/docs/MobileSDK/Guides/FitCount%20Guide)
 
 ## How to run the project
