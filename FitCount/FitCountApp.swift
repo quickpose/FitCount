@@ -14,7 +14,14 @@ struct Exercise: Identifiable, Hashable {
     let name: String
     let details: String
     let features: [QuickPose.Feature]
-    // Add more properties as needed
+    let isCustomExercise: Bool
+    
+    init(name: String, details: String, features: [QuickPose.Feature], isCustomExercise: Bool = false) {
+        self.name = name
+        self.details = details
+        self.features = features
+        self.isCustomExercise = isCustomExercise
+    }
 }
 
 let exercises = [
@@ -33,6 +40,8 @@ let exercises = [
         details: "Stand with feet shoulder-width apart, hold dumbbells at shoulder height, and press them overhead until arms are fully extended.",
         features: [.fitness(.overheadDumbbellPress), .overlay(.upperBody)]
     ),
+    SideTiltsExercise.createExercise().exerciseDefinition,
+    KneeRaisesExercise.createExercise().exerciseDefinition,
 ]
 
 

@@ -37,7 +37,7 @@ enum ViewState: Equatable {
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "PLACE YOUR SDK KEY HERE") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "01JM2BRS0V4EFRDS5ZQWD6W1WY") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
@@ -45,6 +45,7 @@ struct QuickPoseBasicView: View {
     @State private var feedbackText: String? = nil
     
     @State private var counter = QuickPoseThresholdCounter()
+    @State private var customExerciseEngine: CustomExerciseEngine?
     @State private var state: ViewState = .startVolume
     
     @State private var boundingBoxVisibility = 1.0
@@ -53,11 +54,54 @@ struct QuickPoseBasicView: View {
     
     static let synthesizer = AVSpeechSynthesizer()
     
+    // Computed property to determine if feedback should be shown
+    private var shouldShowFeedback: Bool {
+        if sessionConfig.exercise.isCustomExercise {
+            return !(customExerciseEngine?.exercise.hideFeedback ?? false)
+        }
+        return true
+    }
+    
     func canMoveFromBoundingBox(landmarks: QuickPose.Landmarks) -> Bool {
         let xsInBox = landmarks.allLandmarksForBody().allSatisfy { 0.5 - (0.8/2) < $0.x && $0.x < 0.5 + (0.8/2) }
         let ysInBox = landmarks.allLandmarksForBody().allSatisfy { 0.5 - (0.9/2) < $0.y && $0.y < 0.5 + (0.9/2) }
         
         return xsInBox && ysInBox
+    }
+    
+    // Extract the feedback overlay into a separate function to avoid complex type checking
+    @ViewBuilder
+    private func feedbackOverlay(for feedbackText: String) -> some View {
+        VStack {
+            Spacer().frame(height: 60) // Add some top spacing
+            
+            // Determine colors based on feedback message
+            let isCorrect = feedbackText.contains("✅")
+            let isAdjustment = feedbackText.contains("🔴")
+            let backgroundColor = isCorrect ? Color.green.opacity(0.8) : 
+                                isAdjustment ? Color.red.opacity(0.8) : 
+                                Color.black.opacity(0.8)
+            let borderColor = isCorrect ? Color.green : 
+                            isAdjustment ? Color.red : 
+                            Color("AccentColor")
+            
+            Text(feedbackText)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(backgroundColor)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(borderColor, lineWidth: 2)
+                        )
+                )
+                .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
+            Spacer()
+        }
     }
     
     var body: some View {
@@ -162,13 +206,9 @@ struct QuickPoseBasicView: View {
                         .background(Color("AccentColor"))
                     }
                 }
-                .overlay(alignment: .center) {
-                    if case .exercise = state {
-                        if let feedbackText = feedbackText {
-                            Text(feedbackText)
-                                .font(.system(size: 26, weight: .semibold)).foregroundColor(.white)
-                                .padding(16)
-                        }
+                .overlay(alignment: .top) {
+                    if case .exercise = state, let feedbackText = feedbackText, shouldShowFeedback {
+                        feedbackOverlay(for: feedbackText)
                     }
                 }
                 
@@ -214,41 +254,77 @@ struct QuickPoseBasicView: View {
                                         state = .introBoundingBox
                                     }
                                 case .introExercise(_):
+                                    // Initialize custom exercise engine if needed
+                                    if sessionConfig.exercise.isCustomExercise {
+                                        if sessionConfig.exercise.name == "Side Tilts" {
+                                            customExerciseEngine = CustomExerciseEngine(exercise: SideTiltsExercise.createExercise())
+                                        } else if sessionConfig.exercise.name == "Knee Raises" {
+                                            customExerciseEngine = CustomExerciseEngine(exercise: KneeRaisesExercise.createExercise())
+                                        }
+                                    }
                                     DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
                                         state = .exercise(SessionData(count: 0, seconds: 0), enterTime: Date())
                                     }
                                 case .exercise(_, let enterDate):
                                     let secondsElapsed = Int(-enterDate.timeIntervalSinceNow)
                                     
-                                    if let feedback = feedback[sessionConfig.exercise.features.first!] {
-                                        feedbackText = feedback.displayString
-                                    } else {
-                                        feedbackText = nil
-                                        
-                                        if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!] {
-                                            _ = counter.count(result.value) { newState in
-                                                if !newState.isEntered {
-                                                    Text2Speech(text: "\(counter.state.count)").say()
-                                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
-                                                        withAnimation(.easeInOut(duration: 0.1)) {
-                                                            countScale = 2.0
+                                    var currentCount = 0
+                                    
+                                    if sessionConfig.exercise.isCustomExercise {
+                                        // Handle custom exercises
+                                        if let customEngine = customExerciseEngine {
+                                            currentCount = customEngine.processFrame(features: features)
+                                            feedbackText = customEngine.feedbackMessage
+                                            
+                                            // Handle rep completion feedback
+                                            if customEngine.newRepCompleted {
+                                                Text2Speech(text: "\(currentCount)").say()
+                                                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                                                    withAnimation(.easeInOut(duration: 0.1)) {
+                                                        countScale = 2.0
+                                                    }
+                                                    DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
+                                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                                            countScale = 1.0
                                                         }
-                                                        DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
-                                                            withAnimation(.easeInOut(duration: 0.2)) {
-                                                                countScale = 1.0
+                                                    }
+                                                }
+                                                customEngine.newRepCompleted = false // Reset the flag
+                                            }
+                                        }
+                                    } else {
+                                        // Handle built-in exercises
+                                        if let feedback = feedback[sessionConfig.exercise.features.first!] {
+                                            feedbackText = feedback.displayString
+                                        } else {
+                                            feedbackText = nil
+                                            
+                                            if case .fitness = sessionConfig.exercise.features.first, let result = features[sessionConfig.exercise.features.first!] {
+                                                _ = counter.count(result.value) { newState in
+                                                    if !newState.isEntered {
+                                                        Text2Speech(text: "\(counter.state.count)").say()
+                                                        DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                                                            withAnimation(.easeInOut(duration: 0.1)) {
+                                                                countScale = 2.0
+                                                            }
+                                                            DispatchQueue.main.asyncAfter(deadline: .now()+0.4) {
+                                                                withAnimation(.easeInOut(duration: 0.2)) {
+                                                                    countScale = 1.0
+                                                                }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
+                                        currentCount = counter.state.count
                                     }
                                     
-                                    let newResults = SessionData(count: counter.state.count, seconds: secondsElapsed)
+                                    let newResults = SessionData(count: currentCount, seconds: secondsElapsed)
                                     state = .exercise(newResults, enterTime: enterDate) // refresh view for every updated second
                                     var hasFinished = false
                                     if sessionConfig.useReps {
-                                        hasFinished = counter.state.count >= sessionConfig.nReps
+                                        hasFinished = currentCount >= sessionConfig.nReps
                                     } else {
                                         hasFinished = secondsElapsed >= sessionConfig.nSeconds + sessionConfig.nMinutes * 60
                                     }
