@@ -42,6 +42,7 @@ let exercises = [
     ),
     SideTiltsExercise.createExercise().exerciseDefinition,
     KneeRaisesExercise.createExercise().exerciseDefinition,
+    FrontPushupExercise.createExercise().exerciseDefinition,
 ]
 
 

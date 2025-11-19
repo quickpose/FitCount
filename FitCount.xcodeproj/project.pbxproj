@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C3A46602ECE21970013F19A /* FrontPushupExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3A465F2ECE21970013F19A /* FrontPushupExercise.swift */; };
 		6C88C6772E68604700223401 /* CustomExerciseEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C6752E68604700223401 /* CustomExerciseEngine.swift */; };
 		6C88C6782E68604700223401 /* SideTiltsExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C6762E68604700223401 /* SideTiltsExercise.swift */; };
 		6C88C6EF2E69BDBE00223401 /* KneeRaisesExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C6EE2E69BDBE00223401 /* KneeRaisesExercise.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6C3A465F2ECE21970013F19A /* FrontPushupExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontPushupExercise.swift; sourceTree = "<group>"; };
 		6C88C6752E68604700223401 /* CustomExerciseEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomExerciseEngine.swift; sourceTree = "<group>"; };
 		6C88C6762E68604700223401 /* SideTiltsExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideTiltsExercise.swift; sourceTree = "<group>"; };
 		6C88C6EE2E69BDBE00223401 /* KneeRaisesExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KneeRaisesExercise.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				6C88C6752E68604700223401 /* CustomExerciseEngine.swift */,
 				6C88C6EE2E69BDBE00223401 /* KneeRaisesExercise.swift */,
 				6C88C6762E68604700223401 /* SideTiltsExercise.swift */,
+				6C3A465F2ECE21970013F19A /* FrontPushupExercise.swift */,
 				92F2D1FA2A1D0C8400EC1B81 /* Text2Speech.swift */,
 				924D6E212A264B3600227183 /* JsonWriter.swift */,
 				920A3EEB2A1F6E0E00EC6FC9 /* Timer.swift */,
@@ -233,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92CACFD32A1B7DD100DA2B40 /* ContentView.swift in Sources */,
+				6C3A46602ECE21970013F19A /* FrontPushupExercise.swift in Sources */,
 				9215905F2A2A10BF001254BC /* InstructionsView.swift in Sources */,
 				92CACFD12A1B7DD100DA2B40 /* FitCountApp.swift in Sources */,
 				6C88C6772E68604700223401 /* CustomExerciseEngine.swift in Sources */,
@@ -379,23 +383,24 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FitCount/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to provide movements feedback during a workout";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to provide movement feedback during a workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.demo;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.repcount;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -413,23 +418,24 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FitCount/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to provide movements feedback during a workout";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to provide movement feedback during a workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.demo;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.quickpose.repcount;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

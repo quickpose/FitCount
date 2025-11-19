@@ -37,7 +37,7 @@ enum ViewState: Equatable {
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "ENTER YOUR SDK KEY HERE") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
@@ -260,6 +260,8 @@ struct QuickPoseBasicView: View {
                                             customExerciseEngine = CustomExerciseEngine(exercise: SideTiltsExercise.createExercise())
                                         } else if sessionConfig.exercise.name == "Knee Raises" {
                                             customExerciseEngine = CustomExerciseEngine(exercise: KneeRaisesExercise.createExercise())
+                                        } else if sessionConfig.exercise.name == "Front Push-up" {
+                                            customExerciseEngine = CustomExerciseEngine(exercise: FrontPushupExercise.createExercise())
                                         }
                                     }
                                     DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
