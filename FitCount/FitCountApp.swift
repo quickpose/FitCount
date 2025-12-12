@@ -25,24 +25,25 @@ struct Exercise: Identifiable, Hashable {
 }
 
 let exercises = [
-    Exercise(
-        name: "Bicep Curls",
-        details: "Lift weights in both hands by bending your elbow and lifting them towards your shoulder.",
-        features: [.fitness(.bicepCurls), .overlay(.upperBody)]
-    ),
-    Exercise(
-        name: "Squats",
-        details: "Bend your knees and lower your body.",
-        features: [.fitness(.squats), .overlay(.wholeBody)]
-    ),
-    Exercise(
-        name: "Overhead Dumbbell Press",
-        details: "Stand with feet shoulder-width apart, hold dumbbells at shoulder height, and press them overhead until arms are fully extended.",
-        features: [.fitness(.overheadDumbbellPress), .overlay(.upperBody)]
-    ),
-    SideTiltsExercise.createExercise().exerciseDefinition,
-    KneeRaisesExercise.createExercise().exerciseDefinition,
-    FrontPushupExercise.createExercise().exerciseDefinition,
+//    Exercise(
+//        name: "Bicep Curls",
+//        details: "Lift weights in both hands by bending your elbow and lifting them towards your shoulder.",
+//        features: [.fitness(.bicepCurls), .overlay(.upperBody)]
+//    ),
+//    Exercise(
+//        name: "Squats",
+//        details: "Bend your knees and lower your body.",
+//        features: [.fitness(.squats), .overlay(.wholeBody)]
+//    ),
+//    Exercise(
+//        name: "Overhead Dumbbell Press",
+//        details: "Stand with feet shoulder-width apart, hold dumbbells at shoulder height, and press them overhead until arms are fully extended.",
+//        features: [.fitness(.overheadDumbbellPress), .overlay(.upperBody)]
+//    ),
+//    SideTiltsExercise.createExercise().exerciseDefinition,
+//    KneeRaisesExercise.createExercise().exerciseDefinition,
+//    FrontPushupExercise.createExercise().exerciseDefinition,
+    KettlebellSnatchExercise.createExercise().exerciseDefinition
 ]
 
 

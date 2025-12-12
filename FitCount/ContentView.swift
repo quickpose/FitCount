@@ -13,6 +13,7 @@ class SessionConfig: ObservableObject {
     @Published var nMinutes : Int = 0
     @Published var nSeconds : Int = 1
     @Published var useReps: Bool = true
+    @Published var isUnlimitedReps: Bool = false
     @Published var exercise: Exercise = exercises[0] // use first exercise by default but change in the ExerciseDetailsView
 }
 

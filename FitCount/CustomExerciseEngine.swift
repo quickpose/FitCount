@@ -60,14 +60,56 @@ struct ExerciseStage {
     let id: String
     let name: String
     let requirements: [JointType: AngleRange]
+    let alternativeRequirements: [[JointType: AngleRange]]? // Optional: any of these requirement sets can be satisfied
     let description: String
     
+    init(id: String, name: String, requirements: [JointType: AngleRange], alternativeRequirements: [[JointType: AngleRange]]? = nil, description: String) {
+        self.id = id
+        self.name = name
+        self.requirements = requirements
+        self.alternativeRequirements = alternativeRequirements
+        self.description = description
+    }
+    
     func meetsRequirements(angles: [JointType: Double]) -> Bool {
+        // Check primary requirements
+        var primaryMet = true
         for (joint, range) in requirements {
-            guard let angle = angles[joint] else { return false }
-            if !range.contains(angle) { return false }
+            guard let angle = angles[joint] else { 
+                primaryMet = false
+                break
+            }
+            if !range.contains(angle) { 
+                primaryMet = false
+                break
+            }
         }
-        return true
+        
+        if primaryMet {
+            return true
+        }
+        
+        // If primary requirements not met, check alternative requirements (OR logic)
+        if let alternatives = alternativeRequirements {
+            for altRequirements in alternatives {
+                var altMet = true
+                for (joint, range) in altRequirements {
+                    guard let angle = angles[joint] else {
+                        altMet = false
+                        break
+                    }
+                    if !range.contains(angle) {
+                        altMet = false
+                        break
+                    }
+                }
+                if altMet {
+                    return true
+                }
+            }
+        }
+        
+        return false
     }
 }
 
@@ -79,14 +121,16 @@ struct CustomExercise {
     let stages: [ExerciseStage]
     let requiredFeatures: [QuickPose.Feature]
     let hideFeedback: Bool
+    let showAOI: Bool
     
-    init(id: String, name: String, description: String, stages: [ExerciseStage], requiredFeatures: [QuickPose.Feature], hideFeedback: Bool = false) {
+    init(id: String, name: String, description: String, stages: [ExerciseStage], requiredFeatures: [QuickPose.Feature], hideFeedback: Bool = false, showAOI: Bool = false) {
         self.id = id
         self.name = name
         self.description = description
         self.stages = stages
         self.requiredFeatures = requiredFeatures
         self.hideFeedback = hideFeedback
+        self.showAOI = showAOI
     }
     
     var exerciseDefinition: Exercise {
@@ -106,12 +150,19 @@ class CustomExerciseEngine: ObservableObject {
     @Published var feedbackMessage: String = ""
     @Published var newRepCompleted: Bool = false
     @Published var incorrectJoints: Set<JointType> = []
+    @Published var aoiRect: CGRect? = nil // Area of Interest rectangle for visualization
+    @Published var wristInAOI: Bool = false // Visual indicator for wrist in AOI
     
     internal var exercise: CustomExercise
     private var currentStageIndex: Int = 0
     private var lastRepTime: Date = Date()
     private var currentAngles: [JointType: Double] = [:]
     private var isInTransition: Bool = false
+    
+    // AOI and cooldown properties
+    private var wristEnteredAOI: Bool = false
+    private var wristWentAboveShoulder: Bool = false
+    private var repCooldownPeriod: TimeInterval = 1.0
     
     init(exercise: CustomExercise) {
         self.exercise = exercise
@@ -122,14 +173,39 @@ class CustomExerciseEngine: ObservableObject {
         }
     }
     
-    func processFrame(features: [QuickPose.Feature: QuickPose.FeatureResult]) -> Int {
+    func processFrame(features: [QuickPose.Feature: QuickPose.FeatureResult], landmarks: QuickPose.Landmarks? = nil) -> Int {
         // Extract all range of motion angles
         updateAngles(from: features)
         
         // Check current stage requirements
         let currentExerciseStage = exercise.stages[currentStageIndex]
+        let stageRequirementsMet = currentExerciseStage.meetsRequirements(angles: currentAngles)
         
-        if currentExerciseStage.meetsRequirements(angles: currentAngles) {
+        // Check if wrist entered zones WITH proper form (for kettlebell snatch)
+        // Position checks ONLY count when corresponding stage angle requirements are met
+        if let landmarks = landmarks {
+            // Always update AOI visualization (called for every frame)
+            let wristInAOI = checkWristAOI(landmarks: landmarks)
+            let wristIsOverhead = checkWristAboveShoulder(landmarks: landmarks)
+            
+            // Check AOI entry when start position angles are correct
+            let startStage = exercise.stages.first(where: { $0.id == "start_position" })
+            if let startStage = startStage, startStage.meetsRequirements(angles: currentAngles) {
+                if wristInAOI {
+                    wristEnteredAOI = true
+                }
+            }
+            
+            // Check overhead when overhead position angles are correct
+            let overheadStage = exercise.stages.first(where: { $0.id == "overhead_position" })
+            if let overheadStage = overheadStage, overheadStage.meetsRequirements(angles: currentAngles) {
+                if wristIsOverhead {
+                    wristWentAboveShoulder = true
+                }
+            }
+        }
+        
+        if stageRequirementsMet {
             if !isInTransition {
                 // We've entered this stage
                 isInTransition = true
@@ -140,12 +216,41 @@ class CustomExerciseEngine: ObservableObject {
                 
                 // If we've completed all stages, count a rep
                 if nextStageIndex == 0 {
+                    // Check cooldown period
+                    let timeSinceLastRep = Date().timeIntervalSince(lastRepTime)
+                    let cooldownElapsed = timeSinceLastRep >= repCooldownPeriod
+                    
+                    // For kettlebell snatch, also check AOI and overhead requirements
+                    let isKettlebellSnatch = exercise.id == "standing_kettlebell_snatch"
+                    let aoiRequirementMet = !isKettlebellSnatch || wristEnteredAOI
+                    let overheadRequirementMet = !isKettlebellSnatch || wristWentAboveShoulder
+                    
+                    if cooldownElapsed && aoiRequirementMet && overheadRequirementMet {
                     currentReps += 1
                     lastRepTime = Date()
                     if !exercise.hideFeedback {
                         feedbackMessage = "🎉 Rep \(currentReps) Complete!\nStarting over..."
                     }
                     newRepCompleted = true
+                        wristEnteredAOI = false // Reset for next rep
+                        wristWentAboveShoulder = false // Reset for next rep
+                    } else {
+                        // Rep not counted - provide feedback with specific reason
+                        if !cooldownElapsed {
+                            if !exercise.hideFeedback {
+                                feedbackMessage = "⏱️ Too fast!\nWait before next rep"
+                            }
+                        } else if !aoiRequirementMet {
+                            if !exercise.hideFeedback {
+                                feedbackMessage = "⚠️ Go lower!\nWrist in target zone with proper form"
+                            }
+                        } else if !overheadRequirementMet {
+                            if !exercise.hideFeedback {
+                                feedbackMessage = "⚠️ Go higher!\nWrist above shoulder with proper form"
+                            }
+                        }
+                        newRepCompleted = false
+                    }
                 } else {
                     let nextStage = exercise.stages[nextStageIndex]
                     if !exercise.hideFeedback {
@@ -201,6 +306,98 @@ class CustomExerciseEngine: ObservableObject {
         }
     }
     
+    private func checkWristAOI(landmarks: QuickPose.Landmarks) -> Bool {
+        // Only show AOI for kettlebell snatch exercise
+        let isKettlebellSnatch = exercise.id == "standing_kettlebell_snatch"
+        
+        // Determine which arm is the working arm based on shoulder angles
+        // Higher shoulder angle indicates overhead position (working arm)
+        let leftShoulderAngle = currentAngles[.shoulder(side: .left)] ?? 0
+        let rightShoulderAngle = currentAngles[.shoulder(side: .right)] ?? 0
+        
+        // Determine working side based on which arm has higher shoulder angle
+        let workingArmIsLeft = leftShoulderAngle > rightShoulderAngle
+        
+        // Get landmark positions - landmarks return Point3d directly (not optional)
+        let wrist = workingArmIsLeft ? 
+            landmarks.landmark(forBody: .wrist(side: .left)) : 
+            landmarks.landmark(forBody: .wrist(side: .right))
+        let leftHip = landmarks.landmark(forBody: .hip(side: .left))
+        let rightHip = landmarks.landmark(forBody: .hip(side: .right))
+        let leftKnee = landmarks.landmark(forBody: .knee(side: .left))
+        let rightKnee = landmarks.landmark(forBody: .knee(side: .right))
+        
+        // Calculate average hip Y position using normalized coordinates (0-1)
+        // In normalized coordinates: y increases downward (0 = top, 1 = bottom)
+        let avgHipY = (leftHip.y + rightHip.y) / 2
+        
+        // Check if wrist is below hips (higher Y value = lower on screen)
+        let wristBelowHips = wrist.y > avgHipY
+        
+        // Check if wrist is between knees horizontally using normalized coordinates
+        let leftKneeX = leftKnee.x
+        let rightKneeX = rightKnee.x
+        let wristX = wrist.x
+        
+        let minKneeX = min(leftKneeX, rightKneeX)
+        let maxKneeX = max(leftKneeX, rightKneeX)
+        let wristBetweenKnees = wristX >= minKneeX && wristX <= maxKneeX
+        
+        let isInAOI = wristBelowHips && wristBetweenKnees
+        
+        // Update AOI rectangle for visualization (normalized coordinates 0-1)
+        // Only calculate if showAOI is enabled for performance
+        if isKettlebellSnatch && exercise.showAOI {
+            // Define AOI: from avgHipY to bottom of frame, between knees
+            // Add some padding below knees for the bottom boundary
+            let kneeY = max(leftKnee.y, rightKnee.y)
+            let aoiBottom = min(kneeY + 0.15, 1.0) // Extend 15% below knees or to frame bottom
+            
+            aoiRect = CGRect(
+                x: minKneeX,
+                y: avgHipY,
+                width: maxKneeX - minKneeX,
+                height: aoiBottom - avgHipY
+            )
+            
+            // Update real-time visual indicator
+            wristInAOI = isInAOI
+        } else {
+            aoiRect = nil
+            wristInAOI = false
+        }
+        
+        return isInAOI
+    }
+    
+    private func checkWristAboveShoulder(landmarks: QuickPose.Landmarks) -> Bool {
+        // Only check for kettlebell snatch exercise
+        let isKettlebellSnatch = exercise.id == "standing_kettlebell_snatch"
+        guard isKettlebellSnatch else { return true }
+        
+        // Determine which arm is the working arm based on shoulder angles
+        // Higher shoulder angle indicates overhead position (working arm)
+        let leftShoulderAngle = currentAngles[.shoulder(side: .left)] ?? 0
+        let rightShoulderAngle = currentAngles[.shoulder(side: .right)] ?? 0
+        
+        // Determine working side based on which arm has higher shoulder angle
+        let workingArmIsLeft = leftShoulderAngle > rightShoulderAngle
+        
+        // Get landmark positions - landmarks return Point3d directly (not optional)
+        let wrist = workingArmIsLeft ? 
+            landmarks.landmark(forBody: .wrist(side: .left)) : 
+            landmarks.landmark(forBody: .wrist(side: .right))
+        let shoulder = workingArmIsLeft ? 
+            landmarks.landmark(forBody: .shoulder(side: .left)) : 
+            landmarks.landmark(forBody: .shoulder(side: .right))
+        
+        // Check if wrist is above shoulder (lower Y value = higher on screen)
+        // In normalized coordinates: y increases downward (0 = top, 1 = bottom)
+        let wristAboveShoulder = wrist.y < shoulder.y
+        
+        return wristAboveShoulder
+    }
+    
     private func updateFeedback(for stage: ExerciseStage) {
         // Check if feedback should be hidden
         if exercise.hideFeedback {
@@ -252,6 +449,10 @@ class CustomExerciseEngine: ObservableObject {
         isInTransition = false
         currentAngles.removeAll()
         incorrectJoints.removeAll()
+        wristEnteredAOI = false
+        wristWentAboveShoulder = false
+        aoiRect = nil
+        wristInAOI = false
     }
     
     // Debug helper

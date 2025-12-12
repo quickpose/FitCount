@@ -37,7 +37,7 @@ enum ViewState: Equatable {
 }
 
 struct QuickPoseBasicView: View {
-    private var quickPose = QuickPose(sdkKey: "ENTER YOUR SDK KEY HERE") // register for your free key at https://dev.quickpose.ai
+    private var quickPose = QuickPose(sdkKey: "01K5EG841PZRZZ48NP1C4TTKPT") // register for your free key at https://dev.quickpose.ai
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var sessionConfig: SessionConfig
     
@@ -108,8 +108,37 @@ struct QuickPoseBasicView: View {
         GeometryReader { geometry in
             VStack {
                 ZStack(alignment: .top) {
-                    QuickPoseCameraView(useFrontCamera: true, delegate: quickPose)
+                    QuickPoseCameraView(useFrontCamera: false, delegate: quickPose)
                     QuickPoseOverlayView(overlayImage: $overlayImage)
+                    
+                    // AOI Visualization for Kettlebell Snatch (only if showAOI is enabled)
+                    if let aoiRect = customExerciseEngine?.aoiRect,
+                       let showAOI = customExerciseEngine?.exercise.showAOI,
+                       showAOI {
+                        let wristInZone = customExerciseEngine?.wristInAOI ?? false
+                        Rectangle()
+                            .stroke(wristInZone ? Color.green : Color.yellow, lineWidth: 3)
+                            .background(wristInZone ? Color.green.opacity(0.1) : Color.yellow.opacity(0.15))
+                            .frame(
+                                width: geometry.size.width * aoiRect.width,
+                                height: geometry.size.height * aoiRect.height
+                            )
+                            .position(
+                                x: geometry.size.width * (aoiRect.minX + aoiRect.width / 2),
+                                y: geometry.size.height * (aoiRect.minY + aoiRect.height / 2)
+                            )
+                            .overlay(alignment: .top) {
+                                Text(wristInZone ? "✓ In Zone" : "Target Zone")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(wristInZone ? .green : .yellow)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.black.opacity(0.6))
+                                    .cornerRadius(4)
+                                    .padding(.top, 4)
+                            }
+                    }
                 }
                 .frame(width: geometry.safeAreaInsets.leading + geometry.size.width + geometry.safeAreaInsets.trailing)
                 .edgesIgnoringSafeArea(.all)
@@ -191,19 +220,36 @@ struct QuickPoseBasicView: View {
                 
                 .overlay(alignment: .bottom) {
                     if case .exercise(let results, let enterTime) = state {
-                        HStack {
-                            Text(String(results.count) + (sessionConfig.useReps ? " \\ " + String(sessionConfig.nReps) : "") + " reps")
-                                .font(.system(size: 30, weight: .semibold))
-                                .padding(16)
-                                .scaleEffect(countScale)
+                        VStack(spacing: 0) {
+                            // Show "End Workout" button if unlimited reps mode
+                            if sessionConfig.useReps && sessionConfig.isUnlimitedReps {
+                                Button(action: {
+                                    state = .results(SessionData(count: results.count, seconds: Int(-enterTime.timeIntervalSinceNow)))
+                                    quickPose.stop()
+                                }) {
+                                    Text("End Workout")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.white)
+                                        .padding(.vertical, 12)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.red)
+                                }
+                            }
                             
-                            Text(String(format: "%.0f",-enterTime.timeIntervalSinceNow) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds + sessionConfig.nMinutes * 60) : "") + " sec")
-                                .font(.system(size: 30, weight: .semibold))
-                                .padding(16)
+                            HStack {
+                                Text(String(results.count) + (sessionConfig.useReps && !sessionConfig.isUnlimitedReps ? " \\ " + String(sessionConfig.nReps) : "") + " reps")
+                                    .font(.system(size: 30, weight: .semibold))
+                                    .padding(16)
+                                    .scaleEffect(countScale)
+                                
+                                Text(String(format: "%.0f",-enterTime.timeIntervalSinceNow) + (!sessionConfig.useReps ? " \\ " + String(sessionConfig.nSeconds + sessionConfig.nMinutes * 60) : "") + " sec")
+                                    .font(.system(size: 30, weight: .semibold))
+                                    .padding(16)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(.white)
+                            .background(Color("AccentColor"))
                         }
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(.white)
-                        .background(Color("AccentColor"))
                     }
                 }
                 .overlay(alignment: .top) {
@@ -262,6 +308,8 @@ struct QuickPoseBasicView: View {
                                             customExerciseEngine = CustomExerciseEngine(exercise: KneeRaisesExercise.createExercise())
                                         } else if sessionConfig.exercise.name == "Front Push-up" {
                                             customExerciseEngine = CustomExerciseEngine(exercise: FrontPushupExercise.createExercise())
+                                        } else if sessionConfig.exercise.name == "Standing Kettlebell Snatch" {
+                                            customExerciseEngine = CustomExerciseEngine(exercise: KettlebellSnatchExercise.createExercise())
                                         }
                                     }
                                     DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
@@ -275,7 +323,7 @@ struct QuickPoseBasicView: View {
                                     if sessionConfig.exercise.isCustomExercise {
                                         // Handle custom exercises
                                         if let customEngine = customExerciseEngine {
-                                            currentCount = customEngine.processFrame(features: features)
+                                            currentCount = customEngine.processFrame(features: features, landmarks: landmarks)
                                             feedbackText = customEngine.feedbackMessage
                                             
                                             // Handle rep completion feedback
@@ -326,7 +374,8 @@ struct QuickPoseBasicView: View {
                                     state = .exercise(newResults, enterTime: enterDate) // refresh view for every updated second
                                     var hasFinished = false
                                     if sessionConfig.useReps {
-                                        hasFinished = currentCount >= sessionConfig.nReps
+                                        // Don't automatically finish if unlimited reps is enabled
+                                        hasFinished = !sessionConfig.isUnlimitedReps && currentCount >= sessionConfig.nReps
                                     } else {
                                         hasFinished = secondsElapsed >= sessionConfig.nSeconds + sessionConfig.nMinutes * 60
                                     }

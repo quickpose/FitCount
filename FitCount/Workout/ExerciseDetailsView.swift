@@ -27,6 +27,7 @@ struct ExerciseDetailsView: View {
     let exercise: Exercise
     
     @State var selection = 1
+    @State var showUnlimitedToggle = false
     
     var body: some View {
         VStack {
@@ -46,12 +47,34 @@ struct ExerciseDetailsView: View {
                         .font(.headline)
                         .padding(.top, 8)
                     
-                    Picker("Reps", selection: $sessionConfig.nReps) {
-                        ForEach(1...100, id: \.self) { number in
-                            Text("\(number) reps")
+                    Toggle("Unlimited Reps", isOn: $sessionConfig.isUnlimitedReps)
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .onChange(of: sessionConfig.isUnlimitedReps) { unlimited in
+                            if unlimited {
+                                sessionConfig.nReps = 999 // Set to a high number for display purposes
+                            } else {
+                                sessionConfig.nReps = 10 // Reset to default
+                            }
                         }
+                    
+                    if !sessionConfig.isUnlimitedReps {
+                        Picker("Reps", selection: $sessionConfig.nReps) {
+                            ForEach(1...100, id: \.self) { number in
+                                Text("\(number) reps")
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                    } else {
+                        Text("∞")
+                            .font(.system(size: 60, weight: .light))
+                            .foregroundColor(Color("AccentColor"))
+                            .padding()
+                        Text("Tap 'End Workout' when you're done")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.bottom)
                     }
-                    .pickerStyle(WheelPickerStyle())
                 }
                 .clipped()
                 .cornerRadius(10)
