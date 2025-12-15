@@ -111,10 +111,8 @@ struct QuickPoseBasicView: View {
                     QuickPoseCameraView(useFrontCamera: false, delegate: quickPose)
                     QuickPoseOverlayView(overlayImage: $overlayImage)
                     
-                    // AOI Visualization for Kettlebell Snatch (only if showAOI is enabled)
-                    if let aoiRect = customExerciseEngine?.aoiRect,
-                       let showAOI = customExerciseEngine?.exercise.showAOI,
-                       showAOI {
+                    // AOI Visualization for Kettlebell Snatch
+                    if let aoiRect = customExerciseEngine?.aoiRect {
                         let wristInZone = customExerciseEngine?.wristInAOI ?? false
                         Rectangle()
                             .stroke(wristInZone ? Color.green : Color.yellow, lineWidth: 3)

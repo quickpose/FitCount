@@ -10,7 +10,7 @@ import QuickPoseCore
 
 // MARK: - Standing Kettlebell Snatch Exercise Definition
 class KettlebellSnatchExercise {
-    static func createExercise(hideFeedback: Bool = true, showAOI: Bool = false) -> CustomExercise {
+    static func createExercise(hideFeedback: Bool = true, hideAOIVisualization: Bool = false) -> CustomExercise {
         let stages = [
             // Stage 1: Start Position (Either Left OR Right Arm Down)
             ExerciseStage(
@@ -74,7 +74,7 @@ class KettlebellSnatchExercise {
             stages: stages,
             requiredFeatures: requiredFeatures,
             hideFeedback: hideFeedback,
-            showAOI: showAOI
+            hideAOIVisualization: hideAOIVisualization
         )
     }
 }

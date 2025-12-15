@@ -43,7 +43,7 @@ let exercises = [
 //    SideTiltsExercise.createExercise().exerciseDefinition,
 //    KneeRaisesExercise.createExercise().exerciseDefinition,
 //    FrontPushupExercise.createExercise().exerciseDefinition,
-    KettlebellSnatchExercise.createExercise().exerciseDefinition
+    KettlebellSnatchExercise.createExercise(hideAOIVisualization: true).exerciseDefinition
 ]
 
 

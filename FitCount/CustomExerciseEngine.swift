@@ -121,16 +121,16 @@ struct CustomExercise {
     let stages: [ExerciseStage]
     let requiredFeatures: [QuickPose.Feature]
     let hideFeedback: Bool
-    let showAOI: Bool
+    let hideAOIVisualization: Bool
     
-    init(id: String, name: String, description: String, stages: [ExerciseStage], requiredFeatures: [QuickPose.Feature], hideFeedback: Bool = false, showAOI: Bool = false) {
+    init(id: String, name: String, description: String, stages: [ExerciseStage], requiredFeatures: [QuickPose.Feature], hideFeedback: Bool = false, hideAOIVisualization: Bool = false) {
         self.id = id
         self.name = name
         self.description = description
         self.stages = stages
         self.requiredFeatures = requiredFeatures
         self.hideFeedback = hideFeedback
-        self.showAOI = showAOI
+        self.hideAOIVisualization = hideAOIVisualization
     }
     
     var exerciseDefinition: Exercise {
@@ -226,12 +226,12 @@ class CustomExerciseEngine: ObservableObject {
                     let overheadRequirementMet = !isKettlebellSnatch || wristWentAboveShoulder
                     
                     if cooldownElapsed && aoiRequirementMet && overheadRequirementMet {
-                    currentReps += 1
-                    lastRepTime = Date()
-                    if !exercise.hideFeedback {
-                        feedbackMessage = "🎉 Rep \(currentReps) Complete!\nStarting over..."
-                    }
-                    newRepCompleted = true
+                        currentReps += 1
+                        lastRepTime = Date()
+                        if !exercise.hideFeedback {
+                            feedbackMessage = "🎉 Rep \(currentReps) Complete!\nStarting over..."
+                        }
+                        newRepCompleted = true
                         wristEnteredAOI = false // Reset for next rep
                         wristWentAboveShoulder = false // Reset for next rep
                     } else {
@@ -327,12 +327,38 @@ class CustomExerciseEngine: ObservableObject {
         let leftKnee = landmarks.landmark(forBody: .knee(side: .left))
         let rightKnee = landmarks.landmark(forBody: .knee(side: .right))
         
-        // Calculate average hip Y position using normalized coordinates (0-1)
-        // In normalized coordinates: y increases downward (0 = top, 1 = bottom)
+        // Calculate average hip and knee Y positions
         let avgHipY = (leftHip.y + rightHip.y) / 2
+        let avgKneeY = (leftKnee.y + rightKnee.y) / 2
         
-        // Check if wrist is below hips (higher Y value = lower on screen)
-        let wristBelowHips = wrist.y > avgHipY
+        // Current observation: Bottom of box is at hips, top extends upward by height
+        // Goal: Top of box at hips, bottom extends downward to knees
+        // Solution: Shift the entire box DOWN by the full height distance
+        
+        // Store the old minY calculation (which puts bottom at hips)
+        let oldMinY = avgHipY  // This is what we had before
+        
+        // Calculate box height
+        let boxHeight = abs(avgHipY - avgKneeY)
+        
+        // Shift minY down by the full height to flip the box
+        // If Y increases upward (hips > knees): shift DOWN means subtract height
+        // If Y increases downward (hips < knees): shift DOWN means add height  
+        let boxMinY: CGFloat
+        if avgHipY > avgKneeY {
+            // Y increases upward, shift down means subtract
+            boxMinY = oldMinY - boxHeight
+        } else {
+            // Y increases downward, shift down means add
+            boxMinY = oldMinY + boxHeight
+        }
+        
+        print("DEBUG: HipY=\(avgHipY), KneeY=\(avgKneeY), OldMinY=\(oldMinY), NewMinY=\(boxMinY), Height=\(boxHeight)")
+        
+        // For detection, check if wrist Y is between hip and knee levels
+        let minY = min(avgHipY, avgKneeY)
+        let maxY = max(avgHipY, avgKneeY)
+        let wristInVerticalRange = wrist.y >= minY && wrist.y <= maxY
         
         // Check if wrist is between knees horizontally using normalized coordinates
         let leftKneeX = leftKnee.x
@@ -343,21 +369,17 @@ class CustomExerciseEngine: ObservableObject {
         let maxKneeX = max(leftKneeX, rightKneeX)
         let wristBetweenKnees = wristX >= minKneeX && wristX <= maxKneeX
         
-        let isInAOI = wristBelowHips && wristBetweenKnees
+        let isInAOI = wristInVerticalRange && wristBetweenKnees
         
         // Update AOI rectangle for visualization (normalized coordinates 0-1)
-        // Only calculate if showAOI is enabled for performance
-        if isKettlebellSnatch && exercise.showAOI {
-            // Define AOI: from avgHipY to bottom of frame, between knees
-            // Add some padding below knees for the bottom boundary
-            let kneeY = max(leftKnee.y, rightKnee.y)
-            let aoiBottom = min(kneeY + 0.15, 1.0) // Extend 15% below knees or to frame bottom
-            
+        // Only show visualization if not hidden
+        if isKettlebellSnatch && !exercise.hideAOIVisualization {
+            // CGRect: minY at hips (top), height extends down to knees (bottom)
             aoiRect = CGRect(
                 x: minKneeX,
-                y: avgHipY,
+                y: boxMinY,  // Top at hips
                 width: maxKneeX - minKneeX,
-                height: aoiBottom - avgHipY
+                height: boxHeight  // Extends down to knees
             )
             
             // Update real-time visual indicator
