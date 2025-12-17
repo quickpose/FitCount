@@ -108,7 +108,7 @@ struct QuickPoseBasicView: View {
         GeometryReader { geometry in
             VStack {
                 ZStack(alignment: .top) {
-                    QuickPoseCameraView(useFrontCamera: false, delegate: quickPose)
+                    QuickPoseCameraView(useFrontCamera: true, delegate: quickPose)
                     QuickPoseOverlayView(overlayImage: $overlayImage)
                     
                     // AOI Visualization for Kettlebell Snatch
@@ -307,7 +307,7 @@ struct QuickPoseBasicView: View {
                                         } else if sessionConfig.exercise.name == "Front Push-up" {
                                             customExerciseEngine = CustomExerciseEngine(exercise: FrontPushupExercise.createExercise())
                                         } else if sessionConfig.exercise.name == "Standing Kettlebell Snatch" {
-                                            customExerciseEngine = CustomExerciseEngine(exercise: KettlebellSnatchExercise.createExercise())
+                                            customExerciseEngine = CustomExerciseEngine(exercise: KettlebellSnatchExercise.createExercise(hideAOIVisualization: true))
                                         }
                                     }
                                     DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {

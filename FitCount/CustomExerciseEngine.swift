@@ -163,6 +163,9 @@ class CustomExerciseEngine: ObservableObject {
     private var wristEnteredAOI: Bool = false
     private var wristWentAboveShoulder: Bool = false
     private var repCooldownPeriod: TimeInterval = 1.0
+    private var wristLeftAOITime: Date? = nil
+    private var minTimeFromAOIToOverhead: TimeInterval = 0.25
+    private var maxTimeFromAOIToOverhead: TimeInterval = 1.25
     
     init(exercise: CustomExercise) {
         self.exercise = exercise
@@ -193,7 +196,13 @@ class CustomExerciseEngine: ObservableObject {
             if let startStage = startStage, startStage.meetsRequirements(angles: currentAngles) {
                 if wristInAOI {
                     wristEnteredAOI = true
+                    wristLeftAOITime = nil // Reset timer while in AOI
                 }
+            }
+            
+            // Track when wrist leaves the AOI (for timing requirement)
+            if wristEnteredAOI && !wristInAOI && wristLeftAOITime == nil {
+                wristLeftAOITime = Date() // Start timer when leaving AOI
             }
             
             // Check overhead when overhead position angles are correct
@@ -225,7 +234,18 @@ class CustomExerciseEngine: ObservableObject {
                     let aoiRequirementMet = !isKettlebellSnatch || wristEnteredAOI
                     let overheadRequirementMet = !isKettlebellSnatch || wristWentAboveShoulder
                     
-                    if cooldownElapsed && aoiRequirementMet && overheadRequirementMet {
+                    // Check timing requirement: wrist must reach overhead within time window (0.5s - 1.25s)
+                    var timingRequirementMet = true
+                    var timeFromAOIToOverhead: TimeInterval = 0
+                    var tooFast = false
+                    if isKettlebellSnatch, let leftTime = wristLeftAOITime {
+                        timeFromAOIToOverhead = Date().timeIntervalSince(leftTime)
+                        tooFast = timeFromAOIToOverhead < minTimeFromAOIToOverhead
+                        let tooSlow = timeFromAOIToOverhead > maxTimeFromAOIToOverhead
+                        timingRequirementMet = !tooFast && !tooSlow
+                    }
+                    
+                    if cooldownElapsed && aoiRequirementMet && overheadRequirementMet && timingRequirementMet {
                         currentReps += 1
                         lastRepTime = Date()
                         if !exercise.hideFeedback {
@@ -234,6 +254,7 @@ class CustomExerciseEngine: ObservableObject {
                         newRepCompleted = true
                         wristEnteredAOI = false // Reset for next rep
                         wristWentAboveShoulder = false // Reset for next rep
+                        wristLeftAOITime = nil // Reset timer
                     } else {
                         // Rep not counted - provide feedback with specific reason
                         if !cooldownElapsed {
@@ -247,6 +268,14 @@ class CustomExerciseEngine: ObservableObject {
                         } else if !overheadRequirementMet {
                             if !exercise.hideFeedback {
                                 feedbackMessage = "⚠️ Go higher!\nWrist above shoulder with proper form"
+                            }
+                        } else if !timingRequirementMet {
+                            if !exercise.hideFeedback {
+                                if tooFast {
+                                    feedbackMessage = "⚠️ Too fast!\nControl the movement (\(String(format: "%.1f", timeFromAOIToOverhead))s)"
+                                } else {
+                                    feedbackMessage = "⚠️ Too slow!\nSnatch faster (\(String(format: "%.1f", timeFromAOIToOverhead))s)"
+                                }
                             }
                         }
                         newRepCompleted = false
@@ -473,6 +502,7 @@ class CustomExerciseEngine: ObservableObject {
         incorrectJoints.removeAll()
         wristEnteredAOI = false
         wristWentAboveShoulder = false
+        wristLeftAOITime = nil
         aoiRect = nil
         wristInAOI = false
     }
